@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIA Final Exam Prep</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --text: #e2e8f0;
+    --text-muted: #8892a4;
+    --correct: #10b981;
+    --wrong: #ef4444;
+    --warn: #f59e0b;
+    --tag-bg: #1e2140;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ─── LAYOUT ─── */
+  #app { display: flex; height: 100vh; overflow: hidden; }
+  #sidebar { width: 270px; min-width: 270px; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+  #main { flex: 1; overflow-y: auto; padding: 32px 40px; }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar-header { padding: 20px 18px 12px; border-bottom: 1px solid var(--border); }
+  .sidebar-header h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent); font-weight: 700; }
+  .sidebar-header p { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .sidebar-search { padding: 10px 14px; }
+  .sidebar-search input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; color: var(--text); font-size: 12px; outline: none; }
+  .sidebar-search input:focus { border-color: var(--accent); }
+  .sidebar-search input::placeholder { color: var(--text-muted); }
+
+  .nav-section { margin-bottom: 4px; }
+  .nav-week { padding: 7px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-top: 6px; }
+  .nav-item { display: block; padding: 8px 16px 8px 20px; font-size: 13px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; color: var(--text-muted); text-decoration: none; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); border-left-color: var(--accent); }
+  .nav-item.active { background: var(--tag-bg); color: var(--accent); border-left-color: var(--accent); }
+
+  .progress-bar-wrap { padding: 12px 16px; border-top: 1px solid var(--border); margin-top: auto; }
+  .progress-bar-wrap p { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .pbar { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .pbar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.4s; }
+
+  /* ─── MAIN CONTENT ─── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  h2 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; color: var(--accent); }
+  h3 { font-size: 15px; font-weight: 700; margin: 20px 0 8px; color: var(--accent2); }
+  p { font-size: 14px; line-height: 1.7; color: var(--text); margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { font-size: 14px; line-height: 1.7; margin-bottom: 3px; }
+  code { background: var(--surface2); padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'Consolas', monospace; color: var(--accent2); }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; margin: 2px; }
+  .tag-purple { background: #3d2f8f; color: #c4b5fd; }
+  .tag-green { background: #064e3b; color: #6ee7b7; }
+  .tag-red { background: #7f1d1d; color: #fca5a5; }
+  .tag-blue { background: #1e3a5f; color: #93c5fd; }
+  .tag-yellow { background: #78350f; color: #fcd34d; }
+
+  .week-badge { display: inline-block; padding: 4px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* ─── NOTES CARD ─── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-green { border-left: 4px solid var(--accent2); }
+  .card-red { border-left: 4px solid var(--accent3); }
+  .card-yellow { border-left: 4px solid var(--warn); }
+
+  .key-term { font-weight: 700; color: var(--accent2); }
+  .formula { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: 'Consolas', monospace; font-size: 13px; margin: 10px 0; color: var(--warn); }
+
+  .table-wrap { overflow-x: auto; margin: 12px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--surface2); padding: 8px 12px; text-align: left; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* ─── QUIZ ─── */
+  .quiz-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+  .btn { padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #5850e0; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-success { background: var(--correct); color: #fff; }
+  .btn-danger { background: var(--wrong); color: #fff; }
+
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-chip { padding: 5px 12px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
+  .filter-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 14px; transition: border-color 0.2s; }
+  .q-card:hover { border-color: var(--accent); }
+  .q-header { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+  .q-num { min-width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .q-text { font-size: 14px; font-weight: 600; line-height: 1.5; }
+  .q-type { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; font-size: 13px; line-height: 1.5; }
+  .option:hover { border-color: var(--accent); background: var(--tag-bg); }
+  .option.selected { border-color: var(--accent); background: var(--tag-bg); }
+  .option.correct { border-color: var(--correct) !important; background: #052e16 !important; color: #6ee7b7; }
+  .option.wrong { border-color: var(--wrong) !important; background: #450a0a !important; color: #fca5a5; }
+  .option-letter { min-width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 1px; }
+  .option.correct .option-letter { border-color: var(--correct); color: var(--correct); }
+  .option.wrong .option-letter { border-color: var(--wrong); color: var(--wrong); }
+
+  .reveal-btn { margin-top: 12px; padding: 7px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .reveal-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .answer-box { margin-top: 12px; padding: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; line-height: 1.6; display: none; }
+  .answer-box.show { display: block; }
+  .answer-box strong { color: var(--accent2); }
+
+  .score-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; margin: 20px 0; }
+  .score-num { font-size: 56px; font-weight: 900; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .score-label { font-size: 14px; color: var(--text-muted); }
+
+  /* ─── HOME ─── */
+  .hero { background: linear-gradient(135deg, #1a1d27 0%, #22263a 100%); border: 1px solid var(--border); border-radius: 14px; padding: 36px; margin-bottom: 28px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%); border-radius: 50%; }
+  .hero h1 { font-size: 30px; }
+  .hero p { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+  .topic-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .topic-card .icon { font-size: 24px; margin-bottom: 10px; }
+  .topic-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+  .topic-card p { font-size: 12px; color: var(--text-muted); margin: 0; }
+  .stats-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
+  .stat-card { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-card .num { font-size: 30px; font-weight: 800; color: var(--accent); }
+  .stat-card .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
+
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 768px) {
+    #app { flex-direction: column; }
+    #sidebar { width: 100%; min-width: 100%; height: auto; max-height: 220px; border-right: none; border-bottom: 1px solid var(--border); }
+    #main { padding: 20px 16px; }
+    .topics-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ─── SIDEBAR ─── -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <h2>DIA Exam Prep</h2>
+    <p>Developing Immersive Applications</p>
+  </div>
+  <div class="sidebar-search">
+    <input type="text" id="search-input" placeholder="Search topics..." oninput="filterNav(this.value)">
+  </div>
+  <div id="nav-list">
+    <div class="nav-week">Overview</div>
+    <a class="nav-item active" onclick="showPage('home')">🏠 Home</a>
+    <a class="nav-item" onclick="showPage('quiz-all')">🎯 Full Practice Quiz</a>
+
+    <div class="nav-week">Week 1-2</div>
+    <a class="nav-item" onclick="showPage('w1')">📌 W1 – Introduction & XR Landscape</a>
+    <a class="nav-item" onclick="showPage('w2')">🌐 W2 – Foundational Immersion</a>
+
+    <div class="nav-week">Week 3-4</div>
+    <a class="nav-item" onclick="showPage('w3')">📊 W3 – Evaluating Immersive XP</a>
+    <a class="nav-item" onclick="showPage('w4')">⚙️ W4 – Development & WebXR</a>
+
+    <div class="nav-week">Week 5-6</div>
+    <a class="nav-item" onclick="showPage('w5')">🖥️ W5 – Immersive Systems I</a>
+    <a class="nav-item" onclick="showPage('w6')">🔬 W6 – Immersive Systems II: Optics</a>
+
+    <div class="nav-week">Week 8-9</div>
+    <a class="nav-item" onclick="showPage('w8')">🔧 W8 – HMD Simulator Deep Dive</a>
+    <a class="nav-item" onclick="showPage('w9')">🕹️ W9 – Interaction & VE Creation</a>
+
+    <div class="nav-week">Week 10-12</div>
+    <a class="nav-item" onclick="showPage('w10')">🏭 W10-12 – Industry Practices</a>
+
+    <div class="nav-week">Projects</div>
+    <a class="nav-item" onclick="showPage('ipa1')">🧊 IPA1 – Hello Immersive</a>
+    <a class="nav-item" onclick="showPage('ipa2')">🔭 IPA2 – HMD Simulator</a>
+    <a class="nav-item" onclick="showPage('tp')">📋 TP – Rec Room User Study</a>
+
+    <div class="nav-week">⭐ Exam-Style (MDQ)</div>
+    <a class="nav-item" onclick="showPage('quiz-mdq')" style="color:#f59e0b;font-weight:700;">🎯 MDQ — Actual Lecturer Qs</a>
+
+    <div class="nav-week">Practice</div>
+    <a class="nav-item" onclick="showPage('quiz-theory')">📝 Theory Questions</a>
+    <a class="nav-item" onclick="showPage('quiz-technical')">💻 Technical Questions</a>
+    <a class="nav-item" onclick="showPage('quiz-design')">🎨 Design & Evaluation</a>
+    <a class="nav-item" onclick="showPage('quiz-short')">✍️ Short Answer</a>
+    <a class="nav-item" onclick="showPage('quiz-projects')">🗂️ Project Questions</a>
+  </div>
+  <div class="progress-bar-wrap">
+    <p>Progress: <span id="progress-text">0 / 0 answered</span></p>
+    <div class="pbar"><div class="pbar-fill" id="pbar-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- ─── MAIN ─── -->
+<main id="main">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>DIA Final Exam Prep 🎓</h1>
+    <p>Developing Immersive Applications · Weeks 1–12 · SIT</p>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="tag tag-purple">VR/AR/XR</span>
+      <span class="tag tag-green">WebXR</span>
+      <span class="tag tag-blue">HMD Optics</span>
+      <span class="tag tag-red">Cybersickness</span>
+      <span class="tag tag-yellow">Presence & Flow</span>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="num">12</div><div class="lbl">Weeks</div></div>
+    <div class="stat-card"><div class="num">100+</div><div class="lbl">Questions</div></div>
+    <div class="stat-card"><div class="num">10</div><div class="lbl">Topics</div></div>
+    <div class="stat-card"><div class="num">5</div><div class="lbl">Quiz Modes</div></div>
+  </div>
+
+  <h2>Study Topics</h2>
+  <div class="topics-grid">
+    <div class="topic-card" onclick="showPage('w1')"><div class="icon">🌍</div><h3>XR Landscape</h3><p>VR, AR, MR definitions, hardware evolution</p></div>
+    <div class="topic-card" onclick="showPage('w2')"><div class="icon">🎭</div><h3>Foundational Immersion</h3><p>Reality-Virtuality continuum, presence illusions</p></div>
+    <div class="topic-card" onclick="showPage('w3')"><div class="icon">📊</div><h3>Evaluation Methods</h3><p>IPQ, SSQ, Flow Scales, cybersickness</p></div>
+    <div class="topic-card" onclick="showPage('w4')"><div class="icon">⚙️</div><h3>Development Tools</h3><p>WebXR, Babylon.js, Three.js, A-Frame</p></div>
+    <div class="topic-card" onclick="showPage('w5')"><div class="icon">🖥️</div><h3>Immersive Systems I</h3><p>ECS, rendering, physics, audio, AI</p></div>
+    <div class="topic-card" onclick="showPage('w6')"><div class="icon">🔬</div><h3>HMD Optics</h3><p>IPD, FOV, VAC, lens distortion</p></div>
+    <div class="topic-card" onclick="showPage('w8')"><div class="icon">🔧</div><h3>HMD Simulator</h3><p>Off-axis projection, barrel distortion shader</p></div>
+    <div class="topic-card" onclick="showPage('w9')"><div class="icon">🕹️</div><h3>Interaction & VE</h3><p>Locomotion, embodiment, authenticity spectrum</p></div>
+    <div class="topic-card" onclick="showPage('w10')"><div class="icon">🏭</div><h3>Industry Practices</h3><p>Case studies, design→implement→evaluate</p></div>
+    <div class="topic-card" onclick="showPage('quiz-all')"><div class="icon">🎯</div><h3>Full Practice Quiz</h3><p>All 100+ questions in one session</p></div>
+  </div>
+
+  <h2>Quick Tips for the Exam</h2>
+  <div class="card card-accent">
+    <h3>High-Yield Areas</h3>
+    <ul>
+      <li>Milgram-Kishino Reality-Virtuality Continuum — know all 4 dimensions (EWK, RF, EPM, CO)</li>
+      <li>Distinguish <span class="key-term">Place Illusion</span> vs <span class="key-term">Plausibility Illusion</span></li>
+      <li>Three cybersickness symptom clusters: <span class="key-term">Nausea, Oculomotor, Disorientation</span></li>
+      <li>Interaction authenticity spectrum: Natural → Augmented Natural → Artificial</li>
+      <li>Five locomotion methods and their cybersickness trade-offs</li>
+      <li>IPD effect on depth perception and stereo viewing</li>
+      <li>ECS vs OOP architecture advantages</li>
+      <li>WebXR vs OpenXR — which is for web vs native apps</li>
+    </ul>
+  </div>
+  <div class="card card-green">
+    <h3>Know These Instruments</h3>
+    <ul>
+      <li><span class="key-term">IPQ</span> – Igroup Presence Questionnaire (measures presence)</li>
+      <li><span class="key-term">SSQ</span> – Simulator Sickness Questionnaire (cybersickness)</li>
+      <li><span class="key-term">VRSQ</span> – VR Sickness Questionnaire</li>
+      <li><span class="key-term">Flow Scales</span> – measures flow state dimensions</li>
+    </ul>
+  </div>
+</div>
+
+<!-- WEEK 1 -->
+<div class="page" id="page-w1">
+  <div class="week-badge">Week 1</div>
+  <h1>Introduction & XR Landscape</h1>
+
+  <h2>Key Definitions</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><span class="key-term">VR (Virtual Reality)</span> – fully synthetic digital environment; replaces real world entirely</li>
+      <li><span class="key-term">AR (Augmented Reality)</span> – overlays digital content onto the real world</li>
+      <li><span class="key-term">MR (Mixed Reality)</span> – real and virtual objects interact in real time</li>
+      <li><span class="key-term">XR (Extended Reality)</span> – umbrella term for VR, AR, MR</li>
+    </ul>
+  </div>
+
+  <h2>Hardware Evolution</h2>
+  <div class="card">
+    <ul>
+      <li>Oculus Rift DK1 (2013) → first consumer-grade VR HMD</li>
+      <li>Meta Quest 2/3 – standalone, no PC required</li>
+      <li>Apple Vision Pro (2024) – spatial computing, eye+hand+voice input</li>
+      <li>Microsoft HoloLens – enterprise AR headset</li>
+      <li>Snap Spectacles – AR glasses with Lens Studio SDK</li>
+    </ul>
+  </div>
+
+  <h2>Course Learning Outcomes</h2>
+  <div class="card card-green">
+    <ol>
+      <li>Explain hardware and software components in immersive applications</li>
+      <li>Design and implement software components for immersive systems</li>
+      <li>Evaluate key aspects of immersive user experiences</li>
+    </ol>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w1"></div>
+</div>
+
+<!-- WEEK 2 -->
+<div class="page" id="page-w2">
+  <div class="week-badge">Week 2</div>
+  <h1>Foundational Immersion</h1>
+
+  <h2>Reality-Virtuality (RV) Continuum</h2>
+  <div class="card card-accent">
+    <p>Proposed by <span class="key-term">Milgram & Kishino (1994)</span>. A spectrum from real to virtual environments with Mixed Reality in between.</p>
+    <div class="formula">Real ←────────────────────────────────────→ Virtual<br>Real Env │ Augmented Reality │ Augmented Virtuality │ Virtual Env</div>
+  </div>
+
+  <h2>Four Dimensions of the RV Continuum</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Dimension</th><th>Full Form</th><th>Description</th></tr>
+      <tr><td><code>EWK</code></td><td>Extent of World Knowledge</td><td>How much the system knows about the real world</td></tr>
+      <tr><td><code>RF</code></td><td>Reproduction Fidelity</td><td>How realistically the environment is reproduced</td></tr>
+      <tr><td><code>EPM</code></td><td>Extent of Presence Metaphor</td><td>Degree to which user feels present/immersed</td></tr>
+      <tr><td><code>CO</code></td><td>Character Orientation (Fixity)</td><td>Whether virtual characters face/track the user</td></tr>
+    </table>
+  </div>
+
+  <h2>Presence Illusions</h2>
+  <div class="card card-green">
+    <p><span class="key-term">Place Illusion (PI)</span> – The illusion of being in the virtual environment; "being there". Driven by perceptual realism and tracking accuracy.</p>
+    <p><span class="key-term">Plausibility Illusion (Psi)</span> – The illusion that what is happening in the VE is real; believability of events. Driven by narrative and interaction design.</p>
+    <p><strong>Key:</strong> PI = where, Psi = what is happening</p>
+  </div>
+
+  <h2>Types of Presence</h2>
+  <div class="card">
+    <ul>
+      <li><span class="key-term">Spatial Presence</span> – sense of being physically located in the VE</li>
+      <li><span class="key-term">Involvement</span> – degree of attention and engagement</li>
+      <li><span class="key-term">Realism</span> – how realistic the environment feels</li>
+      <li><span class="key-term">Social Presence</span> – sense of being with other people/agents</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w2"></div>
+</div>
+
+<!-- WEEK 3 -->
+<div class="page" id="page-w3">
+  <div class="week-badge">Week 3</div>
+  <h1>Evaluating Immersive Experiences</h1>
+
+  <h2>Immersion vs Presence vs Flow</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><span class="key-term">Immersion</span> – objective system properties (hardware/software capabilities)</li>
+      <li><span class="key-term">Presence</span> – subjective user experience of "being there"</li>
+      <li><span class="key-term">Flow</span> – optimal engagement state (Csikszentmihalyi)</li>
+    </ul>
+  </div>
+
+  <h2>Flow – 8 Dimensions</h2>
+  <div class="card card-green">
+    <ol>
+      <li>Challenge-skill balance</li>
+      <li>Clear goals</li>
+      <li>Unambiguous feedback</li>
+      <li>Action-awareness merging</li>
+      <li>Sense of control</li>
+      <li>Loss of self-consciousness</li>
+      <li>Transformation of time</li>
+      <li>Autotelic experience (intrinsic reward)</li>
+    </ol>
+  </div>
+
+  <h2>Cybersickness – 3 Clusters</h2>
+  <div class="card card-red">
+    <ul>
+      <li><span class="key-term">Nausea</span> – stomach awareness, nausea, retching</li>
+      <li><span class="key-term">Oculomotor</span> – eyestrain, difficulty focusing, headache</li>
+      <li><span class="key-term">Disorientation</span> – dizziness, vertigo, fullness of head</li>
+    </ul>
+    <p>Cause: <span class="key-term">Sensory conflict theory</span> – mismatch between visual motion and vestibular system</p>
+  </div>
+
+  <h2>Evaluation Instruments</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Instrument</th><th>Measures</th><th>Type</th></tr>
+      <tr><td><code>IPQ</code></td><td>Presence (Spatial, Involvement, Realism)</td><td>Quantitative</td></tr>
+      <tr><td><code>SSQ</code></td><td>Simulator Sickness (N, O, D)</td><td>Quantitative</td></tr>
+      <tr><td><code>VRSQ</code></td><td>VR-specific sickness</td><td>Quantitative</td></tr>
+      <tr><td>Flow Scale</td><td>Flow dimensions</td><td>Quantitative</td></tr>
+      <tr><td>Think-aloud</td><td>Usability, thoughts in real-time</td><td>Qualitative</td></tr>
+      <tr><td>Interviews</td><td>In-depth user perspectives</td><td>Qualitative</td></tr>
+      <tr><td>Physiological</td><td>Heart rate, EDA, eye-tracking</td><td>Mixed</td></tr>
+    </table>
+  </div>
+
+  <h2>Immersion as System Properties</h2>
+  <div class="card">
+    <ul>
+      <li>Display resolution</li>
+      <li>Field of View (FOV)</li>
+      <li>Refresh rate (Hz)</li>
+      <li>Tracking accuracy (6-DOF)</li>
+      <li>Rendering fidelity</li>
+      <li>Latency (motion-to-photon)</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w3"></div>
+</div>
+
+<!-- WEEK 4 -->
+<div class="page" id="page-w4">
+  <div class="week-badge">Week 4</div>
+  <h1>Development Tools & WebXR</h1>
+
+  <h2>XR Standards</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><span class="key-term">WebXR</span> – W3C web standard; runs in browser; device-agnostic; JavaScript API</li>
+      <li><span class="key-term">OpenXR</span> – Khronos Group; native C/C++ standard; hardware abstraction layer</li>
+      <li><span class="key-term">WebGL</span> – browser-based 2D/3D rendering (lower level)</li>
+      <li><span class="key-term">WebGPU</span> – next-gen browser GPU API (successor to WebGL)</li>
+    </ul>
+  </div>
+
+  <h2>Framework Comparison</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Framework</th><th>Type</th><th>Language</th><th>Key Trait</th></tr>
+      <tr><td>Babylon.js</td><td>Full 3D engine</td><td>TypeScript</td><td>Rich tooling, inspector, WebXR built-in</td></tr>
+      <tr><td>Three.js</td><td>Low-level 3D lib</td><td>JavaScript</td><td>Lightweight, manual control</td></tr>
+      <tr><td>A-Frame</td><td>Declarative ECS</td><td>HTML + JS</td><td>Simple, HTML-based, beginner friendly</td></tr>
+      <tr><td>PlayCanvas</td><td>Cloud-based engine</td><td>JavaScript</td><td>Online editor, collaborative</td></tr>
+      <tr><td>Unity</td><td>Native engine</td><td>C#</td><td>Industry standard, XR Interaction Toolkit</td></tr>
+      <tr><td>Unreal</td><td>Native engine</td><td>C++/Blueprints</td><td>High-fidelity, cinematic quality</td></tr>
+    </table>
+  </div>
+
+  <h2>Babylon.js WebXR Setup</h2>
+  <div class="card card-green">
+    <p>Key classes: <code>Engine</code>, <code>Scene</code>, <code>WebXRDefaultExperience</code>, <code>XRInputSource</code></p>
+    <ul>
+      <li>Session types: <code>immersive-vr</code>, <code>immersive-ar</code>, <code>inline</code></li>
+      <li>Controller input via <code>XRInputSource.gamepad</code></li>
+      <li>Teleportation via <code>WebXRMotionControllerTeleportation</code></li>
+    </ul>
+  </div>
+
+  <h2>Debugging Tools</h2>
+  <div class="card">
+    <ul>
+      <li><span class="key-term">Chrome DevTools</span> – console, performance profiler</li>
+      <li><span class="key-term">WebXR API Emulator</span> (browser extension) – simulate HMD in browser</li>
+      <li><span class="key-term">WebXR Inspector</span> – inspect XR sessions</li>
+      <li><span class="key-term">HMD Simulator</span> – custom tool to simulate optics</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w4"></div>
+</div>
+
+<!-- WEEK 5 -->
+<div class="page" id="page-w5">
+  <div class="week-badge">Week 5</div>
+  <h1>Immersive Systems I: Software & Hardware</h1>
+
+  <h2>Core Software Components</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><span class="key-term">Rendering System</span> – scene graph, culling, shaders, stereo rendering</li>
+      <li><span class="key-term">Physics System</span> – collision detection, rigid body dynamics, raycasting</li>
+      <li><span class="key-term">Input Handler</span> – WebXR Device API, XRSession, XRInputSource</li>
+      <li><span class="key-term">Audio Processor</span> – spatial audio, HRTF</li>
+      <li><span class="key-term">AI System</span> – pathfinding, behavior trees, nav meshes</li>
+    </ul>
+  </div>
+
+  <h2>ECS vs OOP</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Aspect</th><th>ECS (Entity-Component-System)</th><th>OOP</th></tr>
+      <tr><td>Structure</td><td>Data (components) + Logic (systems) separated</td><td>Data + logic in classes</td></tr>
+      <tr><td>Composition</td><td>Composition over inheritance</td><td>Inheritance-based</td></tr>
+      <tr><td>Performance</td><td>Cache-friendly memory layout</td><td>Can be fragmented</td></tr>
+      <tr><td>Flexibility</td><td>Add/remove components at runtime</td><td>Rigid class hierarchy</td></tr>
+      <tr><td>Example</td><td>A-Frame (HTML components)</td><td>Traditional game classes</td></tr>
+    </table>
+  </div>
+
+  <h2>Physics Engines</h2>
+  <div class="card card-green">
+    <ul>
+      <li><span class="key-term">Havok</span> – high-performance, industry standard (Unity, Babylon.js)</li>
+      <li><span class="key-term">Cannon.js</span> – lightweight JavaScript physics</li>
+      <li><span class="key-term">Ammo.js</span> – port of Bullet physics to JS (more features)</li>
+    </ul>
+  </div>
+
+  <h2>Spatial Audio: HRTF</h2>
+  <div class="card">
+    <p><span class="key-term">HRTF (Head-Related Transfer Function)</span> – filter that simulates how sound reaches ears from different directions. Enables 3D spatial audio without headphones on HMDs.</p>
+  </div>
+
+  <h2>AR Hardware Landscape</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Category</th><th>Example</th><th>Key Feature</th></tr>
+      <tr><td>Smart Glasses</td><td>Meta Ray-Ban</td><td>Minimal display, camera, audio</td></tr>
+      <tr><td>Micro-display</td><td>Xreal Air</td><td>Transparent OLED display</td></tr>
+      <tr><td>AR Headset</td><td>HoloLens, Magic Leap</td><td>Full spatial computing</td></tr>
+      <tr><td>Spatial Computing</td><td>Apple Vision Pro</td><td>Eye + hand + voice, passthrough</td></tr>
+      <tr><td>AR Glasses</td><td>Snap Spectacles</td><td>Waveguide display, Lens Studio</td></tr>
+    </table>
+  </div>
+
+  <h2>Frame Budget</h2>
+  <div class="formula">60 FPS → 16.7 ms/frame | 72 FPS → 13.9 ms/frame | 120 FPS → 8.3 ms/frame<br>Exceeding budget → dropped frames → cybersickness</div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w5"></div>
+</div>
+
+<!-- WEEK 6 -->
+<div class="page" id="page-w6">
+  <div class="week-badge">Week 6</div>
+  <h1>Immersive Systems II: HMD Optics</h1>
+
+  <h2>Thin Lens Equation</h2>
+  <div class="formula">1/f = 1/d_o + 1/d_i<br><br>f = focal length | d_o = object distance | d_i = image distance<br>Magnification m = -d_i / d_o</div>
+
+  <h2>Key HMD Parameters</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Parameter</th><th>Typical Range</th><th>Effect</th></tr>
+      <tr><td>IPD (Inter-Pupillary Distance)</td><td>58–72 mm</td><td>Stereo depth perception; incorrect IPD → eye strain, incorrect depth</td></tr>
+      <tr><td>Eye Relief</td><td>10–20 mm</td><td>Distance from lens to eye; affects FOV and glasses accommodation</td></tr>
+      <tr><td>FOV (diagonal)</td><td>90–110°</td><td>Wider = more immersive; limited by display size and focal length</td></tr>
+      <tr><td>Focal Length</td><td>Variable</td><td>Determines magnification and virtual image distance</td></tr>
+    </table>
+  </div>
+
+  <h2>Vergence-Accommodation Conflict (VAC)</h2>
+  <div class="card card-red">
+    <p><span class="key-term">Vergence</span> – eyes rotate inward/outward to converge on object depth (changes with object distance)</p>
+    <p><span class="key-term">Accommodation</span> – eye lens adjusts focus (in VR, fixed at focal length ~2m)</p>
+    <p><strong>Problem:</strong> Eyes converge at different distances but always focus at fixed VR focal plane → visual fatigue, headaches</p>
+    <p><strong>Solutions being explored:</strong> Light field displays, varifocal displays, eye-tracking guided rendering</p>
+  </div>
+
+  <h2>Lens Distortion</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><span class="key-term">Barrel distortion</span> – image bulges outward (caused by convex VR lenses)</li>
+      <li><span class="key-term">Pincushion distortion</span> – image pinches inward</li>
+      <li><strong>Pre-correction</strong>: render pincushion-distorted image → lens converts back to straight</li>
+    </ul>
+  </div>
+
+  <h2>Stereo Rendering</h2>
+  <div class="card card-green">
+    <ul>
+      <li>Two separate render passes – one per eye</li>
+      <li>Each eye has slightly different view matrix (IPD offset)</li>
+      <li>Each eye has asymmetric off-axis projection (due to IPD)</li>
+      <li><span class="key-term">Foveated rendering</span> – high res at gaze point, low res periphery (eye tracking required)</li>
+      <li><span class="key-term">Multiview rendering</span> – GPU renders both eyes in one pass (WebGL extension)</li>
+    </ul>
+  </div>
+
+  <h2>View Frustum in VR</h2>
+  <div class="card">
+    <p>Due to IPD offset, left and right eye frustums are <span class="key-term">asymmetric</span> – not centered on display. Off-axis projection matrix must account for this. The overlap region of both frustums is what the user "sees" in stereo.</p>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w6"></div>
+</div>
+
+<!-- WEEK 8 -->
+<div class="page" id="page-w8">
+  <div class="week-badge">Week 8</div>
+  <h1>HMD Simulator Deep Dive</h1>
+
+  <h2>Simulator Architecture (6 Modules)</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><code>main.ts</code> – entry point, bootstraps app</li>
+      <li><code>app.ts</code> – Babylon.js engine and scene setup</li>
+      <li><code>hmd.ts</code> – HMD parameter calculations (optics)</li>
+      <li><code>ui.ts</code> – user interface controls</li>
+      <li><code>constants.ts</code> – default HMD parameters</li>
+      <li><code>frustumVisualizer.ts</code> – renders view frustum visualization</li>
+    </ul>
+  </div>
+
+  <h2>Barrel Distortion Shader</h2>
+  <div class="card card-green">
+    <p>Google Cardboard V2 coefficients: <code>k1 = 0.34</code>, <code>k2 = 0.55</code></p>
+    <div class="formula">// GLSL barrel distortion formula<br>r² = x² + y²<br>distortion = 1 + k1·r² + k2·r⁴<br>x' = x · distortion<br>y' = y · distortion</div>
+  </div>
+
+  <h2>Off-Axis Projection Matrix</h2>
+  <div class="card">
+    <p>Unlike standard symmetric perspective projection, VR uses off-axis projection per eye:</p>
+    <ul>
+      <li>Left eye: frustum shifted right (half IPD offset)</li>
+      <li>Right eye: frustum shifted left (half IPD offset)</li>
+      <li>Results in correct stereo parallax for depth perception</li>
+    </ul>
+  </div>
+
+  <h2>Key Relationships</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Parameter Change</th><th>Effect</th></tr>
+      <tr><td>↑ IPD</td><td>More depth separation; wider frustum divergence; deeper/shallower perceived depth</td></tr>
+      <tr><td>↑ Eye Relief</td><td>Wider effective FOV; less comfortable for glasses wearers</td></tr>
+      <tr><td>↑ Focal Length</td><td>More magnification; virtual image appears further away</td></tr>
+      <tr><td>↑ Lens-to-display gap</td><td>Affects object distance d_o → changes magnification</td></tr>
+    </table>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w8"></div>
+</div>
+
+<!-- WEEK 9 -->
+<div class="page" id="page-w9">
+  <div class="week-badge">Week 9</div>
+  <h1>Interaction & Virtual Environment Creation</h1>
+
+  <h2>VE Creation Approaches</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>Model-Based</th><th>Image-Based (360°)</th></tr>
+      <tr><td>DOF</td><td>Full 6-DOF</td><td>3-DOF (rotational only)</td></tr>
+      <tr><td>Interactivity</td><td>High (objects manipulable)</td><td>Low (passive)</td></tr>
+      <tr><td>Effort</td><td>High (modelling + texturing + lighting)</td><td>Low (360° camera capture)</td></tr>
+      <tr><td>Realism</td><td>Stylized or realistic (artist dependent)</td><td>Photorealistic</td></tr>
+      <tr><td>Use cases</td><td>Games, simulations, training</td><td>Virtual tours, empathy experiences</td></tr>
+    </table>
+  </div>
+
+  <h2>Interaction Authenticity Spectrum</h2>
+  <div class="card card-accent">
+    <ul>
+      <li><span class="key-term">Natural</span> – 1:1 mapping to real-world action; e.g., physical walking, direct hand grasping</li>
+      <li><span class="key-term">Augmented Natural</span> – real action + virtual enhancement; e.g., gravity gloves (Half-Life: Alyx), walk-in-place locomotion</li>
+      <li><span class="key-term">Artificial (Magical)</span> – purely virtual mechanics with no real-world equivalent; e.g., teleportation, time manipulation</li>
+    </ul>
+  </div>
+
+  <h2>Interaction Agency</h2>
+  <div class="card card-green">
+    <ul>
+      <li><span class="key-term">Implicit (Passive)</span> – triggered by system; e.g., auto-facing NPC, triggered events</li>
+      <li><span class="key-term">Explicit (Active)</span> – deliberate user action; e.g., pressing button, grabbing object</li>
+    </ul>
+  </div>
+
+  <h2>Five Locomotion Methods</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Method</th><th>Sickness Risk</th><th>Presence</th><th>Notes</th></tr>
+      <tr><td>Teleportation</td><td>None/Low</td><td>Breaks immersion</td><td>Most comfortable; disrupts flow</td></tr>
+      <tr><td>Joystick Continuous</td><td>High</td><td>High</td><td>Natural feel but strong vestibular conflict</td></tr>
+      <tr><td>IMU Walk-in-Place</td><td>Low</td><td>High</td><td>Authentic; needs extra hardware (IMU sensors)</td></tr>
+      <tr><td>Real Walking</td><td>None</td><td>Highest</td><td>Most natural; limited to room scale</td></tr>
+      <tr><td>360° Treadmill</td><td>None</td><td>High</td><td>Large spaces; expensive and bulky</td></tr>
+    </table>
+  </div>
+
+  <h2>Embodiment</h2>
+  <div class="card card-yellow">
+    <p>Three factors enabling embodiment:</p>
+    <ol>
+      <li><span class="key-term">Visual appearance</span> – does avatar look like me?</li>
+      <li><span class="key-term">Visuomotor synchrony</span> – does avatar move when I move?</li>
+      <li><span class="key-term">First-person perspective</span> – viewing from avatar's eyes</li>
+    </ol>
+  </div>
+
+  <h2>Cybersickness Mitigation</h2>
+  <div class="card card-red">
+    <ul>
+      <li>Vignette effects (reduce peripheral vision during movement)</li>
+      <li>Stable visual references (e.g., cockpit/nose in view)</li>
+      <li>User control over locomotion speed</li>
+      <li>Teleportation instead of continuous movement</li>
+      <li>Reduce latency (motion-to-photon)</li>
+      <li>Maintain target frame rate (72+ FPS)</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w9"></div>
+</div>
+
+<!-- WEEK 10-12 -->
+<div class="page" id="page-w10">
+  <div class="week-badge">Week 10–12</div>
+  <h1>Industry Practices & Case Studies</h1>
+
+  <h2>Design → Implementation → Evaluation Framework</h2>
+  <div class="card card-accent">
+    <ol>
+      <li><strong>Design</strong> – stakeholder analysis, design workshops, identify design goals</li>
+      <li><strong>Implementation</strong> – iterative prototyping, technology selection</li>
+      <li><strong>Evaluation</strong> – mixed methods, quantitative + qualitative data collection</li>
+    </ol>
+  </div>
+
+  <h2>Case Study 1: VR Commuting Simulator (LTA)</h2>
+  <div class="card card-green">
+    <h3>Design Goals</h3>
+    <ul>
+      <li>Presence (HDB-scale visuals, photorealistic environment)</li>
+      <li>Presence (semi-natural walking locomotion)</li>
+      <li>Flow (clear goals and tasks)</li>
+      <li>Cybersickness (minimal discomfort)</li>
+    </ul>
+    <h3>Implementation</h3>
+    <ul>
+      <li>3D scans of real MRT stations</li>
+      <li>IMU-based semi-natural walking locomotion</li>
+      <li>Peripheral blur during fast movement</li>
+    </ul>
+    <h3>Evaluation</h3>
+    <ul>
+      <li>IPQ for presence measurement</li>
+      <li>SSQ for cybersickness</li>
+      <li>Flow scales for engagement</li>
+      <li>Think-aloud protocol</li>
+      <li>Physiological monitoring (heart rate)</li>
+    </ul>
+  </div>
+
+  <h2>Case Study 2: Experience Dementia in Singapore</h2>
+  <div class="card card-green">
+    <h3>Design Goals</h3>
+    <ul>
+      <li>Effectiveness (empathy generation)</li>
+      <li>Comfort (minimize cybersickness)</li>
+      <li>Presence (believable dementia simulation)</li>
+    </ul>
+    <h3>Implementation</h3>
+    <ul>
+      <li>360° image-based VE (3-DOF)</li>
+      <li>Caregiver-guided narrative</li>
+      <li>Point-and-click interaction</li>
+      <li>Controlled viewpoint movement</li>
+    </ul>
+    <h3>Evaluation</h3>
+    <ul>
+      <li>Post-experience interviews (empathy)</li>
+      <li>Comparison: VR vs desktop delivery</li>
+      <li>Physiological data</li>
+    </ul>
+  </div>
+
+  <h2>Stakeholder Analysis</h2>
+  <div class="card">
+    <p>Identify: users, clients, domain experts, technology partners. Design workshops align needs across stakeholders before building.</p>
+  </div>
+
+  <h2>Mixed Methods Research</h2>
+  <div class="card card-yellow">
+    <ul>
+      <li><span class="key-term">Quantitative</span> – Likert questionnaires, physiological sensors, performance metrics</li>
+      <li><span class="key-term">Qualitative</span> – think-aloud, semi-structured interviews, observations</li>
+      <li>Mixed methods provides triangulation – validate findings across methods</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-w10"></div>
+</div>
+
+<!-- IPA1 PAGE -->
+<div class="page" id="page-ipa1">
+  <div class="week-badge">IPA 1 · Individual Assignment · 10%</div>
+  <h1>Hello Immersive – Babylon.js WebXR Foundations</h1>
+  <p style="color:var(--text-muted)">Student: Edwin Lee Zirui (2301299) · Babylon.js 8.44.0</p>
+
+  <h2>What Was Built</h2>
+  <div class="card card-accent">
+    <p>A progressive 7-task WebXR experience built with Babylon.js and TypeScript. Each task added one layer of functionality:</p>
+    <ol>
+      <li>Markdown documentation (<code>about-me.md</code>)</li>
+      <li>Hello World console message + basic scene</li>
+      <li>Standard scene: sphere, ground, camera, light, UI plane</li>
+      <li>360° immersive background using <code>VideoDome</code></li>
+      <li>WebXR initialization (<code>immersive-vr</code> + teleportation)</li>
+      <li>GLB model loading (Georgia-Tech Dragon) + click/drag interactions</li>
+      <li>Dynamic UI tracking sphere-to-dragon distance in real time</li>
+    </ol>
+  </div>
+
+  <h2>Key APIs & Classes Used</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>API / Class</th><th>Purpose</th></tr>
+      <tr><td><code>Engine</code>, <code>Scene</code></td><td>Core rendering engine and scene container</td></tr>
+      <tr><td><code>ArcRotateCamera</code></td><td>Orbital desktop camera</td></tr>
+      <tr><td><code>HemisphericLight</code></td><td>Ambient environment lighting</td></tr>
+      <tr><td><code>MeshBuilder.CreateSphere()</code></td><td>Interactive sphere (diameter:2, segments:32)</td></tr>
+      <tr><td><code>MeshBuilder.CreateGround()</code></td><td>Floor for WebXR teleportation</td></tr>
+      <tr><td><code>VideoDome</code></td><td>360° equirectangular video environment</td></tr>
+      <tr><td><code>SceneLoader.ImportMeshAsync()</code></td><td>Async GLB model loading (Dragon)</td></tr>
+      <tr><td><code>scene.createDefaultXRExperienceAsync()</code></td><td>WebXR session + teleportation setup</td></tr>
+      <tr><td><code>ActionManager</code> + <code>OnPickTrigger</code></td><td>Click/select interaction on meshes</td></tr>
+      <tr><td><code>PointerDragBehavior</code></td><td>Drag interaction on horizontal plane</td></tr>
+      <tr><td><code>AdvancedDynamicTexture</code></td><td>Full-screen GUI overlay</td></tr>
+      <tr><td><code>TextBlock</code></td><td>Dynamic text (distance display, labels)</td></tr>
+      <tr><td><code>scene.onBeforeRenderObservable</code></td><td>Per-frame distance update loop</td></tr>
+    </table>
+  </div>
+
+  <h2>WebXR Session Configuration</h2>
+  <div class="card card-green">
+    <div class="formula">scene.createDefaultXRExperienceAsync({<br>
+&nbsp;&nbsp;floorMeshes: [ground],<br>
+&nbsp;&nbsp;uiOptions: { sessionMode: "immersive-vr" },<br>
+&nbsp;&nbsp;teleportationOptions: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;timeToTeleport: 2000,  // 2-second animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;floorMeshes: [ground]<br>
+&nbsp;&nbsp;}<br>
+})</div>
+    <ul style="margin-top:10px">
+      <li>XR helper stored in <code>scene.metadata.xrHelper</code> for test access</li>
+      <li>Session mode: <code>immersive-vr</code> (not <code>inline</code> or <code>immersive-ar</code>)</li>
+    </ul>
+  </div>
+
+  <h2>Interaction Mechanics</h2>
+  <div class="card">
+    <ul>
+      <li><span class="key-term">Click (OnPickTrigger)</span> – changes sphere color + scales up; uses <code>ExecuteCodeAction</code></li>
+      <li><span class="key-term">Drag (PointerDragBehavior)</span> – horizontal drag on Y-axis plane; <code>useObjectOrientationForDragging: false</code></li>
+      <li><span class="key-term">Distance tracking</span> – <code>Vector3.Distance(sphere.position, dragon.position)</code> computed every frame, displayed as <code>"d: X.XX"</code> (yellow, 20px)</li>
+    </ul>
+  </div>
+
+  <h2>Architecture Pattern</h2>
+  <div class="card card-yellow">
+    <ul>
+      <li><code>main.ts</code> – Engine init, render loop</li>
+      <li><code>app.ts</code> – Single <code>App</code> class managing all scene setup</li>
+      <li>Model loads <strong>asynchronously</strong> after scene is ready (non-blocking)</li>
+      <li>Tests use <code>NullEngine</code> (headless, no WebGL needed)</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-ipa1"></div>
+</div>
+
+<!-- IPA2 PAGE -->
+<div class="page" id="page-ipa2">
+  <div class="week-badge">IPA 2 · Feature Contribution · HMD Simulator</div>
+  <h1>HMD Simulator – Lens Distortion & Chromatic Aberration</h1>
+  <p style="color:var(--text-muted)">Edwin's contribution to DIAversity · Live: hmd.diaversity.org · Babylon.js 8.26.1</p>
+
+  <h2>What Edwin Implemented</h2>
+  <div class="card card-accent">
+    <ol>
+      <li><span class="key-term">Barrel Distortion Sliders (k1, k2)</span> – real-time GLSL shader uniform updates</li>
+      <li><span class="key-term">No-Distortion Toggle</span> – saves/restores k1/k2 values; instant comparison</li>
+      <li><span class="key-term">Chromatic Aberration Simulation</span> – per-channel R/G/B distortion offsets in shader</li>
+      <li><span class="key-term">Grid Overlay</span> – dual implementation: shader-based procedural + 3D wireframe meshes at lens position</li>
+      <li><span class="key-term">Parameter Labels</span> – descriptive text below each slider</li>
+    </ol>
+  </div>
+
+  <h2>Distortion Shader Logic</h2>
+  <div class="card card-green">
+    <p>Radial polynomial distortion applied in GLSL post-process shader:</p>
+    <div class="formula">r² = x² + y²<br>distortion = 1 + k1·r² + k2·r⁴<br>x' = x · distortion<br>y' = y · distortion</div>
+    <ul>
+      <li><code>k1</code> – primary barrel distortion coefficient (r², dominates near centre)</li>
+      <li><code>k2</code> – fine-tunes edges (r⁴, affects periphery)</li>
+      <li>Google Cardboard V2 defaults: <code>k1 = 0.34</code>, <code>k2 = 0.55</code></li>
+    </ul>
+  </div>
+
+  <h2>Chromatic Aberration</h2>
+  <div class="card card-red">
+    <p>Different wavelengths (R, G, B) refract at slightly different angles through a real lens. Simulated by sampling each colour channel at a slightly offset UV coordinate:</p>
+    <ul>
+      <li>R channel – largest offset (longest wavelength)</li>
+      <li>G channel – medium offset</li>
+      <li>B channel – smallest offset (shortest wavelength)</li>
+      <li>Result: colour fringing visible at lens periphery</li>
+      <li>Slider controls aberration strength (0.0–1.0 uniform)</li>
+    </ul>
+  </div>
+
+  <h2>Rendering Architecture</h2>
+  <div class="card">
+    <ol>
+      <li>Main camera renders full scene (scene + HMD + frustum layers)</li>
+      <li>Left eye camera → <code>RenderTargetTexture</code> → viewport 20–45% of canvas</li>
+      <li>Right eye camera → <code>RenderTargetTexture</code> → mirrored viewport</li>
+      <li><code>PostProcess</code> applies distortion + chromatic aberration per eye</li>
+      <li>Grid overlay toggles procedurally via shader <code>showGrid</code> uniform</li>
+    </ol>
+  </div>
+
+  <h2>Layer Masking System</h2>
+  <div class="card card-yellow">
+    <div class="formula">LAYER_SCENE   = 0x1  // primitives<br>LAYER_HMD     = 0x2  // HMD hardware mesh<br>LAYER_FRUSTUM = 0x4  // frustum wireframes<br>LAYER_UI      = 0x8  // GUI overlay<br>LAYER_SPLAT_MAIN  = 0x10 // main camera Gaussian splat<br>LAYER_SPLAT_LEFT  = 0x20 // left eye splat<br>LAYER_SPLAT_RIGHT = 0x40 // right eye splat</div>
+    <p>Each camera's <code>layerMask</code> is set so it only renders the meshes it should see — prevents eye cameras seeing HMD hardware mesh, etc.</p>
+  </div>
+
+  <h2>Module Architecture</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Module</th><th>Responsibility</th></tr>
+      <tr><td><code>main.ts</code></td><td>Engine init; detects WebGPU, falls back to WebGL</td></tr>
+      <tr><td><code>app.ts</code></td><td>Scene management, environment loading, camera control</td></tr>
+      <tr><td><code>hmd.ts</code></td><td>HMD class: optical parameters, off-axis projection math, shader uniforms</td></tr>
+      <tr><td><code>ui.ts</code></td><td>Sliders, stats panel, labels; calls App methods only (decoupled)</td></tr>
+      <tr><td><code>frustumVisualizer.ts</code></td><td>3D tube meshes showing eye camera frustums</td></tr>
+      <tr><td><code>constants.ts</code></td><td>Layer masks, Google Cardboard V2 preset defaults</td></tr>
+    </table>
+  </div>
+
+  <h2>HMD Physical Parameters (Google Cardboard V2)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr>
+      <tr><td>Eye Relief</td><td>18 mm</td><td>Distance from eye to lens</td></tr>
+      <tr><td>IPD</td><td>65 mm</td><td>Interpupillary distance</td></tr>
+      <tr><td>Focal Length (f)</td><td>43 mm</td><td>Lens focal length</td></tr>
+      <tr><td>Lens-to-display</td><td>42 mm</td><td>Physical gap between lens and screen</td></tr>
+      <tr><td>Display PPI</td><td>400</td><td>Pixel density</td></tr>
+      <tr><td>k1</td><td>0.34</td><td>Primary distortion coefficient</td></tr>
+      <tr><td>k2</td><td>0.55</td><td>Secondary distortion coefficient</td></tr>
+    </table>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-ipa2"></div>
+</div>
+
+<!-- TP PAGE -->
+<div class="page" id="page-tp">
+  <div class="week-badge">Team Project · User Evaluation Study</div>
+  <h1>Rec Room: Quest 3 vs PC – XR User Study</h1>
+  <p style="color:var(--text-muted)">Edwin's role: Flow Subteam Data Analyst · Team: irwenfanclub</p>
+
+  <h2>Research Question</h2>
+  <div class="card card-accent">
+    <p>How does <span class="key-term">platform</span> (Quest 3 VR vs PC desktop) influence users' <span class="key-term">spatial presence, social presence, flow, and comfort/cybersickness</span> during Rec Room activities?</p>
+  </div>
+
+  <h2>Study Design</h2>
+  <div class="card">
+    <ul>
+      <li><span class="key-term">Design</span>: Within-subject (each participant used both platforms)</li>
+      <li><span class="key-term">n</span>: 10 participants, all male, age 25</li>
+      <li><span class="key-term">Order</span>: PC → Quest 3 (counterbalanced)</li>
+      <li><span class="key-term">Task</span>: 10 different Rec Room activities (Paintball, Bowling, Escape Room, Charades, Disc Golf, etc.)</li>
+      <li><span class="key-term">Duration</span>: ~12–15 min per platform</li>
+      <li><span class="key-term">Data collection</span>: Post-task Likert surveys + observer notes</li>
+    </ul>
+  </div>
+
+  <h2>Constructs & Instruments</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Construct</th><th>Scale</th><th>Items</th></tr>
+      <tr><td>Spatial Presence</td><td>1–7 Likert</td><td>6 items (sense of being there, realism, physical location, interaction naturalness, space awareness, surrounded)</td></tr>
+      <tr><td>Flow</td><td>1–7 Likert</td><td>6 items from FSS + FKS + GameFlow</td></tr>
+      <tr><td>Comfort (overall)</td><td>1–7 single item</td><td>"How comfortable was your experience?"</td></tr>
+      <tr><td>Cybersickness Symptoms</td><td>0–3 per symptom</td><td>5 symptoms: Nausea, Dizziness, Eye Strain, Headache, Fatigue</td></tr>
+    </table>
+  </div>
+
+  <h2>Flow Scale Items (Edwin's Construct)</h2>
+  <div class="card card-green">
+    <table>
+      <tr><th>Item</th><th>Flow Dimension</th><th>Source</th></tr>
+      <tr><td>"I was completely focused"</td><td>Concentration</td><td>FSS</td></tr>
+      <tr><td>"I felt in control"</td><td>Sense of control</td><td>FKS</td></tr>
+      <tr><td>"I always knew what to do next"</td><td>Clear goals</td><td>GameFlow</td></tr>
+      <tr><td>"I received clear feedback"</td><td>Unambiguous feedback</td><td>FSS</td></tr>
+      <tr><td>"Difficulty matched my ability"</td><td>Challenge-skill balance</td><td>FKS</td></tr>
+      <tr><td>"I lost track of time"</td><td>Temporal distortion</td><td>FSS</td></tr>
+    </table>
+  </div>
+
+  <h2>Key Findings</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Construct</th><th>Quest 3</th><th>PC</th><th>Difference</th><th>Verdict</th></tr>
+      <tr><td>Spatial Presence</td><td>5.62 (SD 0.59)</td><td>5.13 (SD 0.51)</td><td>+0.49 VR</td><td>VR advantage</td></tr>
+      <tr><td>Flow</td><td>5.22 (SD 0.43)</td><td>5.10 (SD 0.56)</td><td>+0.12 VR</td><td>Negligible difference</td></tr>
+      <tr><td>Comfort (overall)</td><td>5.70 (SD 1.06)</td><td>5.50 (SD 1.27)</td><td>+0.20 VR</td><td>Negligible</td></tr>
+      <tr><td>Symptom Sum (0–15)</td><td>2.40 (SD 2.12)</td><td>1.10 (SD 1.37)</td><td>+1.30 VR</td><td>VR = 2× symptoms</td></tr>
+    </table>
+  </div>
+
+  <h2>Symptom Breakdown</h2>
+  <div class="card card-red">
+    <ul>
+      <li><span class="key-term">Eye Strain</span>: Quest 3 1.00 vs PC 0.40 (2.5× higher in VR) – visual tasks (aiming, scanning)</li>
+      <li><span class="key-term">Nausea</span>: Quest 3 0.70 vs PC 0.20 (3.5× higher) – free-roaming activities</li>
+      <li><span class="key-term">Dizziness</span>: Both ~0.10–0.20 – Rec Room's comfort locomotion effective</li>
+      <li><span class="key-term">Fatigue</span>: Quest 3 0.40 vs PC 0.00 – HMD weight and thermal load</li>
+      <li>70% Quest 3 users reported any discomfort vs 50% PC users</li>
+    </ul>
+  </div>
+
+  <h2>Key Interpretations</h2>
+  <div class="card card-yellow">
+    <ul>
+      <li>High <strong>comfort ratings</strong> despite higher symptoms → participants distinguished enjoyment from physical discomfort</li>
+      <li><strong>Flow was equal</strong> on both platforms → flow can be achieved through good UX regardless of hardware</li>
+      <li><strong>Activity type</strong> mattered more than platform for some constructs (social tasks ≈ same; action tasks → VR advantage)</li>
+      <li>Rec Room's conservative locomotion design effectively prevented dizziness</li>
+    </ul>
+  </div>
+
+  <h2>Practice Questions</h2>
+  <div id="quiz-tp"></div>
+</div>
+
+<!-- MDQ Quiz Page -->
+<div class="page" id="page-quiz-mdq">
+  <div class="week-badge" style="border-color:#f59e0b;color:#f59e0b;">⭐ Highest Priority — From Actual Lecture MDQ Slides</div>
+  <h1>MDQ — Actual Lecturer Questions</h1>
+  <div class="card card-yellow" style="margin-bottom:20px;">
+    <p><strong>These questions came directly from the MDQ slides used by your lecturers</strong> (Chek Tien TAN, Sean Chen from Meta, Yethoven Tukimin from Meta). These are the closest thing to the final exam format. Master all of these first.</p>
+    <ul style="margin-top:8px;">
+      <li>W10-12 Case Studies MDQ — design pipeline, commuting simulator, dementia experience</li>
+      <li>W10 Industry Practices MDQ (Sean Chen/Meta) — enterprise case studies, TTSH, Pfizer, Inspired Education</li>
+      <li>W11 AI Spatial Computing MDQ (Yethoven/Meta) — Solutions Architect, digital twins, AI dev loop, PRD</li>
+    </ul>
+  </div>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('mdq')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('mdq')">↺ Reset</button>
+  </div>
+  <div id="quiz-mdq"></div>
+</div>
+
+<!-- Project Quiz Page -->
+<div class="page" id="page-quiz-projects">
+  <h1>Project-Based Questions</h1>
+  <p style="color:var(--text-muted);margin-bottom:20px;">Questions based on IPA1, IPA2 HMD Simulator, and the TP Rec Room user study.</p>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('projects')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('projects')">↺ Reset</button>
+  </div>
+  <div id="quiz-projects"></div>
+</div>
+
+<!-- QUIZ PAGES -->
+<div class="page" id="page-quiz-all">
+  <h1>Full Practice Quiz</h1>
+  <p style="color:var(--text-muted);margin-bottom:20px;">All topics combined. Click an option to answer, or reveal the answer for open-ended questions.</p>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('all')">🔀 Shuffle Questions</button>
+    <button class="btn btn-outline" onclick="resetQuiz('all')">↺ Reset</button>
+    <span id="score-all" style="font-size:13px;color:var(--text-muted);"></span>
+  </div>
+  <div id="quiz-all"></div>
+</div>
+
+<div class="page" id="page-quiz-theory">
+  <h1>Theory Questions</h1>
+  <p style="color:var(--text-muted);margin-bottom:20px;">Foundations, presence, flow, cybersickness, and RV continuum.</p>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('theory')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('theory')">↺ Reset</button>
+  </div>
+  <div id="quiz-theory"></div>
+</div>
+
+<div class="page" id="page-quiz-technical">
+  <h1>Technical Questions</h1>
+  <p style="color:var(--text-muted);margin-bottom:20px;">Hardware, optics, rendering, frameworks, physics engines.</p>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('technical')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('technical')">↺ Reset</button>
+  </div>
+  <div id="quiz-technical"></div>
+</div>
+
+<div class="page" id="page-quiz-design">
+  <h1>Design & Evaluation Questions</h1>
+  <p style="color:var(--text-muted);margin-bottom:20px;">Interaction design, evaluation methods, case studies.</p>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('design')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('design')">↺ Reset</button>
+  </div>
+  <div id="quiz-design"></div>
+</div>
+
+<div class="page" id="page-quiz-short">
+  <h1>Short Answer Questions</h1>
+  <p style="color:var(--text-muted);margin-bottom:20px;">Open-ended questions requiring 2–5 sentence answers. Click "Reveal Answer" to check.</p>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('short')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('short')">↺ Reset</button>
+  </div>
+  <div id="quiz-short"></div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ─── QUESTION BANK ───────────────────────────────────────────────────────────
+const questions = [
+
+// ══ THEORY ══════════════════════════════════════════════════════════════════
+{id:1, tags:['theory','w1'], type:'mcq',
+  q:"Which term is the umbrella for VR, AR, and MR?",
+  opts:["Extended Reality (XR)","Hybrid Reality (HR)","Digital Reality (DR)","Spatial Computing (SC)"],
+  ans:0, exp:"XR (Extended Reality) is the umbrella term covering VR, AR, and MR."
+},
+{id:2, tags:['theory','w2'], type:'mcq',
+  q:"In Milgram & Kishino's RV continuum, what does 'EPM' stand for?",
+  opts:["Extent of Presence Metaphor","Environmental Projection Mode","Engagement Performance Metric","Extended Perceptual Mapping"],
+  ans:0, exp:"EPM = Extent of Presence Metaphor — the degree to which the user feels present/immersed."
+},
+{id:3, tags:['theory','w2'], type:'mcq',
+  q:"Place Illusion (PI) in VR is primarily driven by:",
+  opts:["Narrative believability and event plausibility","Perceptual realism and accurate tracking","Social interaction with virtual agents","Quality of audio spatialization"],
+  ans:1, exp:"PI ('being there') is driven by perceptual realism and tracking accuracy — it's about convincing the senses you are in a place."
+},
+{id:4, tags:['theory','w2'], type:'mcq',
+  q:"Plausibility Illusion (Psi) refers to:",
+  opts:["The illusion of being physically located in a VE","The illusion that virtual events are actually happening","Accurate rendering of physical materials","Synchronization between visual and haptic feedback"],
+  ans:1, exp:"Psi is the illusion that what is happening in the VE is real — driven by narrative and interaction design."
+},
+{id:5, tags:['theory','w2'], type:'mcq',
+  q:"Which dimension of the RV Continuum describes how much the system knows about the real world?",
+  opts:["RF (Reproduction Fidelity)","EWK (Extent of World Knowledge)","CO (Character Orientation)","EPM (Extent of Presence Metaphor)"],
+  ans:1, exp:"EWK = Extent of World Knowledge — how much the system understands and incorporates the real environment."
+},
+{id:6, tags:['theory','w3'], type:'mcq',
+  q:"Which THREE clusters form the Simulator Sickness Questionnaire (SSQ)?",
+  opts:["Nausea, Oculomotor, Disorientation","Headache, Vertigo, Fatigue","Presence, Flow, Cybersickness","Visual, Vestibular, Proprioceptive"],
+  ans:0, exp:"SSQ measures: Nausea (N), Oculomotor (O), and Disorientation (D)."
+},
+{id:7, tags:['theory','w3'], type:'mcq',
+  q:"According to sensory conflict theory, cybersickness is caused by:",
+  opts:["Low frame rate below 30 FPS","Mismatch between visual motion and vestibular system","Poor rendering quality of textures","Incorrect IPD adjustment"],
+  ans:1, exp:"Sensory conflict theory: the visual system perceives motion (from VR) while the vestibular system detects no physical movement, causing conflict and nausea."
+},
+{id:8, tags:['theory','w3'], type:'mcq',
+  q:"Which questionnaire measures PRESENCE in immersive environments?",
+  opts:["SSQ (Simulator Sickness Questionnaire)","IPQ (Igroup Presence Questionnaire)","VRSQ","Flow Scale"],
+  ans:1, exp:"IPQ (Igroup Presence Questionnaire) measures presence across Spatial Presence, Involvement, and Realism dimensions."
+},
+{id:9, tags:['theory','w3'], type:'mcq',
+  q:"Flow, as defined by Csikszentmihalyi, requires:",
+  opts:["High difficulty and low skill","Balance between challenge level and user skill","Random and unpredictable events","Complete sensory immersion"],
+  ans:1, exp:"Flow's first dimension is challenge-skill balance — too easy causes boredom, too hard causes anxiety."
+},
+{id:10, tags:['theory','w3'], type:'mcq',
+  q:"Which of the following is NOT a dimension of Flow?",
+  opts:["Autotelic experience","Clear goals","Vergence-accommodation conflict","Action-awareness merging"],
+  ans:2, exp:"Vergence-accommodation conflict is an optics concept, not a Flow dimension. The 8 Flow dimensions include: challenge-skill balance, clear goals, unambiguous feedback, action-awareness merging, sense of control, loss of self-consciousness, time transformation, autotelic experience."
+},
+{id:11, tags:['theory','w3'], type:'mcq',
+  q:"'Immersion' in XR research refers to:",
+  opts:["The subjective feeling of presence","Objective system properties like FOV and resolution","The narrative believability of virtual events","The emotional response to VR content"],
+  ans:1, exp:"Immersion = objective hardware/software system properties (FOV, refresh rate, resolution, tracking). Presence = subjective experience."
+},
+{id:12, tags:['theory','w2'], type:'mcq',
+  q:"Which is NOT a type of presence measured by IPQ?",
+  opts:["Spatial Presence","Social Presence","Flow Presence","Realism"],
+  ans:2, exp:"IPQ measures: Spatial Presence, Involvement, Realism, and can include Social Presence. 'Flow Presence' is not a standard IPQ subscale."
+},
+{id:13, tags:['theory','w1'], type:'mcq',
+  q:"Augmented Reality differs from Virtual Reality in that AR:",
+  opts:["Requires higher-end hardware","Overlays digital content onto the real world","Provides full 6-DOF movement","Only works with mobile devices"],
+  ans:1, exp:"AR overlays digital information onto the real world (see-through or passthrough), while VR replaces the real world entirely."
+},
+{id:14, tags:['theory','w9'], type:'mcq',
+  q:"Which factor is NOT part of the three embodiment factors in VR?",
+  opts:["Visual appearance of avatar","Visuomotor synchrony","Audio spatialization","First-person perspective"],
+  ans:2, exp:"The three embodiment factors are: (1) Visual appearance, (2) Visuomotor synchrony, (3) First-person perspective. Audio is important for presence but not one of the three embodiment factors."
+},
+{id:15, tags:['theory','w9'], type:'mcq',
+  q:"'Walk-in-place' locomotion is categorized as:",
+  opts:["Natural interaction","Augmented Natural interaction","Artificial (Magical) interaction","Passive implicit interaction"],
+  ans:1, exp:"Walk-in-place uses a real physical action (walking motion) enhanced with virtual mechanics (converts small movements into larger virtual locomotion) = Augmented Natural."
+},
+
+// ══ TECHNICAL ════════════════════════════════════════════════════════════════
+{id:16, tags:['technical','w4'], type:'mcq',
+  q:"WebXR is a standard maintained by:",
+  opts:["Khronos Group","W3C (World Wide Web Consortium)","OpenXR Alliance","IEEE"],
+  ans:1, exp:"WebXR is a W3C web standard for accessing VR/AR hardware through web browsers."
+},
+{id:17, tags:['technical','w4'], type:'mcq',
+  q:"OpenXR is designed primarily for:",
+  opts:["Web-based XR apps in browsers","Native C/C++ XR applications as a hardware abstraction layer","Mobile AR only","Python data science applications"],
+  ans:1, exp:"OpenXR (Khronos Group) is a native C/C++ standard providing a hardware abstraction layer for cross-platform XR development."
+},
+{id:18, tags:['technical','w4'], type:'mcq',
+  q:"Which framework uses an Entity-Component-System (ECS) architecture with HTML-based declarative syntax?",
+  opts:["Babylon.js","Three.js","A-Frame","PlayCanvas"],
+  ans:2, exp:"A-Frame uses ECS architecture expressed through HTML attributes (components) on HTML elements (entities), making it beginner-friendly."
+},
+{id:19, tags:['technical','w5'], type:'mcq',
+  q:"HRTF stands for:",
+  opts:["Head-Related Transfer Function","High-Resolution Tracking Framework","Haptic Response Timing Format","Head-Rendered Texture Fidelity"],
+  ans:0, exp:"HRTF = Head-Related Transfer Function — a filter simulating how sound reaches ears from different directions, enabling 3D spatial audio."
+},
+{id:20, tags:['technical','w6'], type:'mcq',
+  q:"In the thin lens equation 1/f = 1/d_o + 1/d_i, what is 'd_i'?",
+  opts:["Object distance","Image distance (virtual image location)","IPD offset","Display diagonal"],
+  ans:1, exp:"d_i = image distance — where the virtual image appears to be (in VR HMDs, this determines the apparent depth of the virtual screen)."
+},
+{id:21, tags:['technical','w6'], type:'mcq',
+  q:"Barrel distortion in VR lenses is pre-corrected by rendering:",
+  opts:["Barrel-distorted image (same distortion)","Pincushion-distorted image (inverse distortion)","Undistorted image with post-processing","Chromatic aberration corrected image"],
+  ans:1, exp:"Render pincushion-distorted image → convex lens applies barrel distortion → the two inversely cancel out → straight final image."
+},
+{id:22, tags:['technical','w6'], type:'mcq',
+  q:"Vergence-Accommodation Conflict (VAC) occurs because:",
+  opts:["IPD is too wide for average users","Eyes converge at different depths but always focus at the fixed VR focal plane","Lens distortion affects color differently per eye","Frame rate drops below 60 FPS"],
+  ans:1, exp:"Vergence (eye rotation for depth) varies with virtual object depth, but accommodation (eye focus) is always fixed at the VR display's focal length (~2m). This conflict causes visual fatigue."
+},
+{id:23, tags:['technical','w6'], type:'mcq',
+  q:"Foveated rendering improves performance by:",
+  opts:["Rendering both eyes in one GPU pass","Reducing resolution in the peripheral visual field, maintaining high res at gaze point","Increasing refresh rate beyond 120 FPS","Skipping physics calculations for distant objects"],
+  ans:1, exp:"Foveated rendering uses eye tracking to render high detail only where the user is looking (fovea), reducing GPU load by lowering resolution in periphery."
+},
+{id:24, tags:['technical','w5'], type:'mcq',
+  q:"Which physics engine is a JavaScript port of the Bullet physics library?",
+  opts:["Havok","Cannon.js","Ammo.js","PhysX"],
+  ans:2, exp:"Ammo.js is an Emscripten-compiled port of the Bullet physics C++ library to JavaScript. Cannon.js is a native JS implementation."
+},
+{id:25, tags:['technical','w5'], type:'mcq',
+  q:"In ECS architecture, 'Systems' are responsible for:",
+  opts:["Storing data (position, color, health)","Processing and logic applied to entities with matching components","Grouping components into named entities","Managing memory allocation"],
+  ans:1, exp:"In ECS: Entities = unique IDs, Components = pure data, Systems = logic/behavior that processes entities with specific components."
+},
+{id:26, tags:['technical','w8'], type:'mcq',
+  q:"The Google Cardboard V2 barrel distortion coefficients are approximately:",
+  opts:["k1=0.10, k2=0.20","k1=0.34, k2=0.55","k1=0.60, k2=0.90","k1=1.00, k2=2.00"],
+  ans:1, exp:"Google Cardboard V2 uses k1=0.34 and k2=0.55 in the barrel distortion formula: distortion = 1 + k1·r² + k2·r⁴"
+},
+{id:27, tags:['technical','w8'], type:'mcq',
+  q:"In stereo VR rendering, why are the left and right eye frustums asymmetric?",
+  opts:["Different lens focal lengths per eye","IPD offset displaces each eye from display center, requiring off-axis projection","Different refresh rates per eye","Foveated rendering applies different resolutions"],
+  ans:1, exp:"IPD places each eye to the left/right of the display center. The frustum must be off-axis to account for this offset, resulting in asymmetric frustums per eye."
+},
+{id:28, tags:['technical','w5'], type:'mcq',
+  q:"A target frame rate of 72 FPS gives a frame budget of approximately:",
+  opts:["16.7 ms","13.9 ms","8.3 ms","20.0 ms"],
+  ans:1, exp:"1000 ms ÷ 72 FPS ≈ 13.9 ms per frame. Exceeding this budget causes dropped frames and potential cybersickness."
+},
+{id:29, tags:['technical','w4'], type:'mcq',
+  q:"Babylon.js uses which primary programming language?",
+  opts:["C#","Python","TypeScript","Rust"],
+  ans:2, exp:"Babylon.js is built with TypeScript (transpiles to JavaScript) and is used directly in TypeScript or JavaScript projects."
+},
+{id:30, tags:['technical','w6'], type:'mcq',
+  q:"Typical VR HMD Field of View (FOV) is approximately:",
+  opts:["30–45° diagonal","60–75° diagonal","90–110° diagonal","150–180° diagonal"],
+  ans:2, exp:"Most modern VR HMDs (Quest 2/3, Valve Index) have ~90–110° diagonal FOV. Human binocular FOV is ~220° horizontal."
+},
+{id:31, tags:['technical','w6'], type:'mcq',
+  q:"What effect does increasing Eye Relief have?",
+  opts:["Narrows the effective FOV","Widens the effective FOV and helps glasses wearers","Increases display resolution","Reduces motion-to-photon latency"],
+  ans:1, exp:"Greater eye relief (eye further from lens) increases effective FOV but may reduce comfort for non-glasses wearers. It's needed for glasses accommodation."
+},
+{id:32, tags:['technical','w5'], type:'mcq',
+  q:"Multiview rendering in WebGL allows:",
+  opts:["Higher texture resolution","Both VR eyes rendered in a single GPU pass","Real-time physics simulation","Hand tracking without controllers"],
+  ans:1, exp:"Multiview rendering (OVR_multiview extension) renders both eyes in one draw call, roughly halving the number of draw calls and improving GPU efficiency."
+},
+{id:33, tags:['technical','w4'], type:'mcq',
+  q:"Which WebXR session type is used for immersive VR experiences?",
+  opts:["inline","immersive-ar","immersive-vr","passthrough-vr"],
+  ans:2, exp:"WebXR session types: 'inline' (non-immersive, in browser), 'immersive-vr' (full VR), 'immersive-ar' (AR with passthrough)."
+},
+{id:34, tags:['technical','w5'], type:'mcq',
+  q:"Scene graph culling in 3D rendering serves to:",
+  opts:["Calculate physics collisions","Remove objects outside camera view to save render cost","Apply post-processing effects","Synchronize multiplayer state"],
+  ans:1, exp:"Culling removes objects not visible to the camera (frustum culling) or occluded behind other objects (occlusion culling), saving significant GPU work."
+},
+
+// ══ DESIGN & EVALUATION ══════════════════════════════════════════════════════
+{id:35, tags:['design','w9'], type:'mcq',
+  q:"Which locomotion method has the LOWEST cybersickness risk while maintaining reasonable presence?",
+  opts:["Joystick continuous movement","Real walking","Teleportation","IMU-based walk-in-place"],
+  ans:1, exp:"Real walking has essentially zero cybersickness risk (no sensory conflict) and the highest presence. Teleportation has low sickness but breaks immersion; IMU walk-in-place is second best."
+},
+{id:36, tags:['design','w9'], type:'mcq',
+  q:"Teleportation as a locomotion method is best described as:",
+  opts:["Natural interaction","Augmented Natural interaction","Artificial (Magical) interaction","Implicit interaction"],
+  ans:2, exp:"Teleportation has no real-world equivalent movement mechanism — it's purely virtual and magical, requiring no physical action equivalent."
+},
+{id:37, tags:['design','w3'], type:'mcq',
+  q:"Think-aloud protocol is classified as which type of data collection?",
+  opts:["Quantitative","Physiological","Qualitative","Neurological"],
+  ans:2, exp:"Think-aloud protocol is a qualitative method — participants verbalize thoughts in real-time during interaction, providing rich descriptive data."
+},
+{id:38, tags:['design','w10'], type:'mcq',
+  q:"In the VR Commuting Simulator case study, which locomotion technique was used to enhance presence?",
+  opts:["Joystick continuous","Teleportation","IMU-based semi-natural walking","Real walking treadmill"],
+  ans:2, exp:"The LTA VR Commuting Simulator used IMU-based semi-natural walking to give presence of physical movement without a full treadmill setup."
+},
+{id:39, tags:['design','w10'], type:'mcq',
+  q:"The 'Experience Dementia in Singapore' case study used which type of virtual environment?",
+  opts:["Full 3D model-based with 6-DOF","360° image-based with 3-DOF","Real-time photogrammetry","AR overlay on real world"],
+  ans:1, exp:"The dementia experience used 360° image-based VE — photorealistic, 3-DOF, lower development effort, appropriate for empathy-focused narrative experience."
+},
+{id:40, tags:['design','w3'], type:'mcq',
+  q:"Which evaluation approach provides triangulation of findings?",
+  opts:["Only quantitative questionnaires","Only physiological data","Mixed methods (quantitative + qualitative)","Subjective self-reporting only"],
+  ans:2, exp:"Mixed methods triangulation validates findings across multiple data sources — if questionnaires AND interviews AND physiological data converge, findings are more reliable."
+},
+{id:41, tags:['design','w9'], type:'mcq',
+  q:"A VR game where players physically walk in their room to move in the game uses which category of interaction?",
+  opts:["Artificial (Magical)","Augmented Natural","Natural","Implicit"],
+  ans:2, exp:"Physical walking in room = 1:1 mapping to virtual movement = Natural interaction (no enhancement or augmentation)."
+},
+{id:42, tags:['design','w9'], type:'mcq',
+  q:"'Gravity gloves' in Half-Life: Alyx (objects fly to your hand when pointed at) are an example of:",
+  opts:["Natural interaction","Augmented Natural interaction","Artificial interaction","Implicit interaction"],
+  ans:1, exp:"Real arm movement + virtual enhancement (objects attracted across distance) = Augmented Natural. Uses real physical action but with a virtual superpower added."
+},
+{id:43, tags:['design','w3'], type:'mcq',
+  q:"IPD (Inter-Pupillary Distance) incorrect adjustment primarily causes:",
+  opts:["Lower frame rate","Eye strain and incorrect depth perception","Increased latency","Display burn-in"],
+  ans:1, exp:"Wrong IPD misaligns the rendered stereo images with actual eye positions, causing eye strain, diplopia (double vision), and incorrect depth/scale perception."
+},
+{id:44, tags:['design','w10'], type:'mcq',
+  q:"In the Design→Implementation→Evaluation framework, what typically happens in the Design phase?",
+  opts:["Writing production code","Stakeholder analysis and design workshops","User testing and data collection","Technical architecture selection"],
+  ans:1, exp:"Design phase: stakeholder analysis, identifying user needs, design workshops, setting design goals (presence, flow, cybersickness targets)."
+},
+{id:45, tags:['design','w9'], type:'mcq',
+  q:"A vignette effect applied during VR locomotion works by:",
+  opts:["Increasing rendering resolution","Reducing peripheral vision during movement to minimize sensory conflict","Applying motion blur to all objects","Synchronizing controller vibration with movement"],
+  ans:1, exp:"Vignette darkens the edges of view during movement, reducing the peripheral motion cues that conflict with vestibular absence of movement — reducing cybersickness."
+},
+{id:46, tags:['design','w9'], type:'mcq',
+  q:"Which factor does NOT directly contribute to cybersickness?",
+  opts:["High latency (motion-to-photon)","Low frame rate","Continuous joystick locomotion","High display resolution"],
+  ans:3, exp:"High display resolution generally reduces cybersickness (cleaner image). The others all increase cybersickness risk."
+},
+{id:47, tags:['design','w5'], type:'mcq',
+  q:"The main advantage of ECS over traditional OOP in game/XR development is:",
+  opts:["Simpler syntax for beginners","Better code encapsulation","Composition over inheritance, better runtime flexibility and cache performance","Native support in all browsers"],
+  ans:2, exp:"ECS: composition (mix and match components) over OOP inheritance hierarchy; data-oriented design is cache-friendly; components can be added/removed at runtime."
+},
+{id:48, tags:['design','w10'], type:'mcq',
+  q:"Why was 360° image-based VE chosen for the Dementia experience over 3D model-based?",
+  opts:["360° provides full 6-DOF movement","360° is photorealistic and lower effort; 3-DOF acceptable for empathy narrative","3D modelling is too expensive in all cases","The hardware required 360° format"],
+  ans:1, exp:"Photorealistic appearance was important for emotional impact (empathy). 3-DOF was acceptable since interaction was limited to viewpoint+point-and-click. Lower production effort matched the research budget."
+},
+
+// ══ SHORT ANSWER ══════════════════════════════════════════════════════════════
+{id:49, tags:['short','theory'], type:'short',
+  q:"Explain the difference between Place Illusion (PI) and Plausibility Illusion (Psi) in VR.",
+  ans:"<strong>Place Illusion (PI)</strong> is the illusion of 'being there' — the sense of physical presence in the virtual environment. It is driven by perceptual realism, accurate tracking (6-DOF), and sensory fidelity. <strong>Plausibility Illusion (Psi)</strong> is the illusion that what is happening in the VE is real — the believability of events. It is driven by narrative coherence, interaction design, and whether virtual events respond meaningfully to user actions. PI asks 'where am I?' while Psi asks 'is this really happening?'"
+},
+{id:50, tags:['short','theory'], type:'short',
+  q:"What are the four dimensions of Milgram & Kishino's Reality-Virtuality Continuum? Describe each briefly.",
+  ans:"<strong>EWK (Extent of World Knowledge)</strong> — how much the system knows/incorporates information about the real environment. <strong>RF (Reproduction Fidelity)</strong> — how accurately the environment is reproduced visually and perceptually. <strong>EPM (Extent of Presence Metaphor)</strong> — the degree to which the user feels present and immersed. <strong>CO (Character Orientation)</strong> — whether virtual characters orient toward and track the user's position."
+},
+{id:51, tags:['short','technical'], type:'short',
+  q:"What is Vergence-Accommodation Conflict (VAC) and why does it cause discomfort in VR?",
+  ans:"VAC arises because VR decouples two normally linked visual processes. <strong>Vergence</strong> (eye rotation inward/outward) adjusts based on virtual object depth in the scene. <strong>Accommodation</strong> (lens focus) always remains fixed at the HMD's focal length (~2m) regardless of virtual depth. In real life these two processes are tightly coupled; in VR they diverge. This mismatch causes visual fatigue, headaches, and contributes to reduced comfort during extended sessions."
+},
+{id:52, tags:['short','technical'], type:'short',
+  q:"Explain how barrel distortion pre-correction works in VR HMD rendering.",
+  ans:"Convex lenses in VR HMDs cause barrel distortion — the image appears to bulge outward. To counteract this, the renderer applies the <strong>inverse</strong> distortion (pincushion distortion) before rendering. When the pincushion-pre-distorted image passes through the convex lens, the two opposite distortions cancel out, resulting in a geometrically correct straight-line image for the user. The distortion is applied using a shader with coefficients (e.g., k1=0.34, k2=0.55 for Google Cardboard V2)."
+},
+{id:53, tags:['short','design'], type:'short',
+  q:"Compare the five locomotion methods in VR in terms of cybersickness risk and presence.",
+  ans:"<strong>Real walking</strong>: zero sickness, highest presence (room-scale limited). <strong>360° treadmill</strong>: minimal sickness, high presence (expensive). <strong>IMU walk-in-place</strong>: low sickness, high presence (needs IMU hardware). <strong>Teleportation</strong>: low sickness but breaks presence/immersion (flow disruption). <strong>Joystick continuous</strong>: highest sickness risk, high presence when working. The trade-off is generally: more natural = higher presence but may need physical space or hardware; more comfortable = less sickness but less immersion."
+},
+{id:54, tags:['short','technical'], type:'short',
+  q:"What is the difference between WebXR and OpenXR? When would you use each?",
+  ans:"<strong>WebXR</strong> is a W3C web standard for browser-based XR. It uses JavaScript/TypeScript, runs in browsers without installation, and is device-agnostic. Use for web-deployed experiences accessible via URL. <strong>OpenXR</strong> is a Khronos Group standard for native XR applications in C/C++. It provides a hardware abstraction layer so apps work across different HMDs (Quest, Vive, Index). Use for native high-performance applications (Unity, Unreal Engine). Key distinction: WebXR = browser distribution; OpenXR = native distribution."
+},
+{id:55, tags:['short','design'], type:'short',
+  q:"Explain Entity-Component-System (ECS) architecture and its advantages for XR development.",
+  ans:"ECS separates game objects into: <strong>Entities</strong> (unique IDs with no logic), <strong>Components</strong> (pure data like position, color), and <strong>Systems</strong> (logic processing entities with specific components). Advantages: (1) <strong>Composition over inheritance</strong> — avoid rigid class hierarchies; add/remove behavior at runtime. (2) <strong>Cache efficiency</strong> — data-oriented layout means components stored contiguously in memory for CPU cache friendliness. (3) <strong>Flexibility</strong> — same entity can be any combination of components without rewriting class structure. A-Frame demonstrates ECS with HTML attributes as components."
+},
+{id:56, tags:['short','theory'], type:'short',
+  q:"Describe the three clusters of cybersickness symptoms and the theory explaining its cause.",
+  ans:"The SSQ measures three clusters: <strong>Nausea</strong> (stomach awareness, nausea, retching), <strong>Oculomotor</strong> (eyestrain, difficulty focusing, blurred vision, headache), and <strong>Disorientation</strong> (dizziness, vertigo, fullness of head). The dominant explanation is <strong>sensory conflict theory</strong>: visual input (from the VR display) shows motion/movement, but the vestibular system (inner ear) detects no physical movement. The CNS interprets this conflict as potential poisoning and triggers nausea as a protective response — a mismatch between expected and received sensory signals."
+},
+{id:57, tags:['short','design'], type:'short',
+  q:"What is the interaction authenticity spectrum? Give one example for each level.",
+  ans:"The spectrum describes how closely virtual interactions map to real-world physical actions. <strong>Natural</strong>: 1:1 mapping — e.g., physically walking in a room moves you in VR, or directly grasping a virtual object. <strong>Augmented Natural</strong>: real action + virtual enhancement — e.g., gravity gloves (Half-Life: Alyx) where a real arm gesture remotely attracts objects; walk-in-place locomotion. <strong>Artificial (Magical)</strong>: no real-world equivalent — e.g., teleportation, time manipulation, flying by button press. More natural = higher embodiment and presence; more artificial = more comfort or expanded virtual capabilities."
+},
+{id:58, tags:['short','design'], type:'short',
+  q:"Describe the design goals and evaluation methods used in the VR Commuting Simulator case study.",
+  ans:"<strong>Design goals</strong>: (1) Presence via HDB-scale photorealistic visuals (3D scans of real MRT stations); (2) Presence via semi-natural walking locomotion (IMU-based); (3) Flow via clear in-experience tasks; (4) Minimal cybersickness. <strong>Evaluation methods</strong>: IPQ questionnaire (presence), SSQ (cybersickness), Flow Scales (engagement), think-aloud protocol (qualitative insights), physiological monitoring (heart rate). Mixed methods approach allows triangulation — quantitative data validated by qualitative insights."
+},
+{id:59, tags:['short','technical'], type:'short',
+  q:"Why must each eye in a VR HMD use a different projection matrix?",
+  ans:"Each eye is offset from the display center by half the user's IPD. A standard symmetric projection assumes the eye is centered on the display, which would be incorrect for VR. The offset requires an <strong>off-axis (asymmetric) projection matrix</strong> — the frustum is shifted horizontally to account for the eye's position relative to the lens and display. Left eye shifts right, right eye shifts left. Without this correction, the stereo images would not converge correctly for depth perception, causing eye strain and incorrect parallax."
+},
+{id:60, tags:['short','design'], type:'short',
+  q:"What role do affordances play in immersive interaction design?",
+  ans:"<strong>Affordances</strong> are perceptual cues that signal to a user how an object can be interacted with. In VR/AR, affordances guide users to discover and use interactions without explicit instructions. For example, a glowing door handle affords pulling; a highlighted button affords pressing. Good affordance design reduces cognitive load, makes interactions intuitive, and increases presence by making the virtual world feel responsive and meaningful. Poor affordances lead to confusion about what is interactive, breaking flow and presence."
+},
+
+// ══ MORE MCQs ════════════════════════════════════════════════════════════════
+{id:61, tags:['theory','w2'], type:'mcq',
+  q:"In the RV Continuum, 'Augmented Virtuality' is positioned:",
+  opts:["Between Real Environment and Augmented Reality","Between Augmented Reality and Virtual Environment, closer to Virtual","Between Virtual Environment and nothing","Identical to Mixed Reality"],
+  ans:1, exp:"The continuum: Real Env | AR | Augmented Virtuality | Virtual Env. Augmented Virtuality is a mostly virtual environment with some real elements injected."
+},
+{id:62, tags:['technical','w6'], type:'mcq',
+  q:"IPD stands for:",
+  opts:["Image Projection Distance","Inter-Pupillary Distance","Internal Processing Delay","Interface Panel Dimension"],
+  ans:1, exp:"IPD = Inter-Pupillary Distance — the distance between the centers of the pupils, typically 58–72mm for adults."
+},
+{id:63, tags:['design','w9'], type:'mcq',
+  q:"An avatar that automatically faces the user when addressed is an example of:",
+  opts:["Natural interaction","Explicit interaction","Implicit (passive) interaction","Augmented Natural interaction"],
+  ans:2, exp:"Implicit/passive interaction is triggered by the system without deliberate user action — the NPC turning to face you is system-driven."
+},
+{id:64, tags:['technical','w5'], type:'mcq',
+  q:"Navigation meshes (NavMesh) in XR are used for:",
+  opts:["Texture rendering optimization","AI pathfinding — defining walkable areas for virtual agents","Hand tracking boundaries","Audio spatialization zones"],
+  ans:1, exp:"NavMesh defines the walkable surface geometry for AI agents to navigate, enabling pathfinding algorithms to plan routes avoiding obstacles."
+},
+{id:65, tags:['theory','w3'], type:'mcq',
+  q:"A Likert scale questionnaire is classified as which type of data collection?",
+  opts:["Qualitative","Quantitative","Physiological","Ethnographic"],
+  ans:1, exp:"Likert scales (e.g., 1=Strongly Disagree to 7=Strongly Agree) produce ordinal numerical data — this is quantitative data collection."
+},
+{id:66, tags:['design','w10'], type:'mcq',
+  q:"Stakeholder analysis in the Design phase helps to:",
+  opts:["Optimize rendering performance","Align the needs of users, clients, domain experts, and technical partners before building","Choose between Unity and Unreal Engine","Determine cybersickness medication"],
+  ans:1, exp:"Stakeholder analysis maps who has a stake in the project and what they need, ensuring the design satisfies all parties and avoids costly late-stage revisions."
+},
+{id:67, tags:['technical','w4'], type:'mcq',
+  q:"In a Babylon.js WebXR project, what is the entry point for application initialization?",
+  opts:["scene.ts","index.html / main.ts","webxr.config.js","hmd.ts"],
+  ans:1, exp:"Babylon.js apps typically start with index.html loading main.ts (or main.js), which creates the Engine and Scene."
+},
+{id:68, tags:['technical','w5'], type:'mcq',
+  q:"Which statement about Havok physics engine is correct?",
+  opts:["Havok is a pure JavaScript lightweight library","Havok is a high-performance industry-standard physics engine used in Unity and Babylon.js","Havok was built specifically for WebXR browser use","Havok only handles 2D physics"],
+  ans:1, exp:"Havok is a mature, high-performance physics middleware used in major game engines including Unity and Babylon.js. It's known for production-quality simulation."
+},
+{id:69, tags:['theory','w9'], type:'mcq',
+  q:"'Loss of self-consciousness' is a dimension of which psychological concept?",
+  opts:["Presence","Cybersickness","Flow","Embodiment"],
+  ans:2, exp:"Loss of self-consciousness (ego dissolution during peak engagement) is one of Csikszentmihalyi's 8 dimensions of Flow."
+},
+{id:70, tags:['design','w9'], type:'mcq',
+  q:"Which virtual environment creation approach provides full 6-DOF movement?",
+  opts:["360° image-based","Model-based (3D)","Both provide 6-DOF","Neither provides 6-DOF"],
+  ans:1, exp:"Model-based (3D) environments allow full 6-DOF movement (translate + rotate in all axes). 360° image-based environments only allow 3-DOF (rotation only — you can't walk around in a 360° photo)."
+},
+{id:71, tags:['technical','w8'], type:'mcq',
+  q:"Which module in the HMD Simulator is responsible for optical calculations?",
+  opts:["app.ts","ui.ts","hmd.ts","frustumVisualizer.ts"],
+  ans:2, exp:"hmd.ts handles HMD parameter calculations including magnification, virtual image distance, and off-axis projection matrix computation."
+},
+{id:72, tags:['theory','w3'], type:'mcq',
+  q:"Social presence refers to:",
+  opts:["The hardware networking capabilities of a VR system","The sense of being with other people or virtual agents in the VE","Physical location tracking accuracy","Sharing VR footage on social media"],
+  ans:1, exp:"Social presence = the sense of 'being with' others — real or virtual agents — in the virtual environment. Relevant for multiplayer VR and social XR applications."
+},
+{id:73, tags:['technical','w6'], type:'mcq',
+  q:"Multiview rendering reduces GPU load by:",
+  opts:["Halving texture resolution","Rendering both VR eyes in a single GPU draw call pass","Skipping physics for distant objects","Reducing polygon count automatically"],
+  ans:1, exp:"Multiview rendering (OVR_multiview) submits a single draw call that the GPU uses to render to both eye targets simultaneously, roughly halving draw calls."
+},
+{id:74, tags:['design','w10'], type:'mcq',
+  q:"Why is physiological monitoring used alongside questionnaires in XR evaluation?",
+  opts:["Questionnaires cannot be administered in VR","Physiological data (heart rate, EDA) provides objective, real-time measures that don't rely on self-report","Physiological monitoring is cheaper than questionnaires","Regulations require it for all VR studies"],
+  ans:1, exp:"Self-report questionnaires can be biased (demand characteristics, recall issues). Physiological data provides objective, continuous real-time measures that triangulate with subjective reports."
+},
+{id:75, tags:['theory','w1'], type:'mcq',
+  q:"The three learning outcomes for the DIA module include all EXCEPT:",
+  opts:["Explain hardware and software components in immersive applications","Design and implement software components for immersive systems","Evaluate key aspects of immersive user experiences","Manufacture head-mounted display hardware"],
+  ans:3, exp:"The three LOs are: (1) Explain hardware/software components, (2) Design and implement software, (3) Evaluate user experiences. Manufacturing hardware is not a learning outcome."
+},
+{id:76, tags:['technical','w5'], type:'mcq',
+  q:"In A-Frame (ECS), which HTML element represents an 'Entity'?",
+  opts:["<a-scene>","<a-entity>","<a-component>","<a-system>"],
+  ans:1, exp:"In A-Frame: <a-entity> = Entity, HTML attributes on it = Components (e.g., position, geometry, material), JavaScript registered systems = Systems."
+},
+{id:77, tags:['design','w3'], type:'mcq',
+  q:"'Action-awareness merging' in Flow refers to:",
+  opts:["Synchronizing controller input with haptic output","The sense of acting automatically without conscious deliberation","Merging real and virtual actions","Tracking hand movements with computer vision"],
+  ans:1, exp:"Action-awareness merging: when deeply in flow, actions feel automatic — the person acts without conscious step-by-step deliberation, merging with the activity."
+},
+{id:78, tags:['technical','w4'], type:'mcq',
+  q:"Three.js compared to Babylon.js is:",
+  opts:["A complete game engine with built-in WebXR support","A lighter-weight 3D library requiring more manual setup","Designed for AR mobile only","A physics simulation framework"],
+  ans:1, exp:"Three.js is a lower-level 3D library with more manual control. Babylon.js is a full engine with built-in WebXR, inspector, physics integration, and more tooling out of the box."
+},
+{id:79, tags:['design','w9'], type:'mcq',
+  q:"Which hardware enables the most natural hand-based interaction in VR?",
+  opts:["Gamepad controllers","Joysticks","Hand tracking (computer vision based)","Keyboard and mouse"],
+  ans:2, exp:"Hand tracking (using cameras to track bare hands without controllers) provides the most natural interaction — no handheld device required, enabling direct virtual object manipulation."
+},
+{id:80, tags:['technical','w6'], type:'mcq',
+  q:"Increasing focal length in an HMD will:",
+  opts:["Reduce magnification and bring virtual image closer","Increase magnification and move virtual image further away","Have no effect on the displayed image","Reduce the required IPD adjustment"],
+  ans:1, exp:"Longer focal length → greater magnification → virtual image appears further away (from thin lens equation: longer f with same display-to-lens distance changes d_i)."
+},
+
+// ══ MORE SHORT ANSWERS ════════════════════════════════════════════════════════
+{id:81, tags:['short','technical'], type:'short',
+  q:"What is HRTF and why is it important for immersive audio in VR?",
+  ans:"<strong>HRTF (Head-Related Transfer Function)</strong> is a filtering function that models how the shape of the human head, ears (pinnae), and torso affect how sound from different directions reaches the eardrums. It encodes directional cues (elevation, azimuth, distance) that the auditory system uses for 3D sound localization. In VR, applying HRTF to audio sources makes sounds appear to come from specific 3D positions in the virtual space — enhancing presence and spatial immersion. Without HRTF, audio feels flat and 'inside the head' rather than spatially located."
+},
+{id:82, tags:['short','design'], type:'short',
+  q:"Why is the Design→Implementation→Evaluation cycle iterative rather than linear in XR projects?",
+  ans:"XR projects involve novel user experiences where requirements are difficult to specify upfront. Evaluation reveals unexpected usability issues, cybersickness problems, or presence-breaking elements that weren't anticipated during design. Each evaluation cycle informs design revisions and implementation changes. Prototypes are tested early (when cheaper to change) — findings from user tests reshape the design, which leads to new implementation, which is evaluated again. This iteration reduces risk of building a product that fails to achieve presence, flow, or comfort goals."
+},
+{id:83, tags:['short','theory'], type:'short',
+  q:"List and briefly explain 4 of the 8 dimensions of Flow (Csikszentmihalyi).",
+  ans:"<strong>1. Challenge-skill balance</strong>: Task difficulty matches user skill — too easy = boredom, too hard = anxiety. <strong>2. Clear goals</strong>: User always knows what to do next, reducing uncertainty and maintaining focus. <strong>3. Unambiguous feedback</strong>: Immediate, clear feedback on actions allows real-time adjustment. <strong>4. Autotelic experience</strong>: The activity is intrinsically rewarding — done for its own sake, not external rewards. (Others include: action-awareness merging, sense of control, loss of self-consciousness, transformation of time.)"
+},
+{id:84, tags:['short','technical'], type:'short',
+  q:"Describe the key architectural differences between Babylon.js and Three.js.",
+  ans:"<strong>Babylon.js</strong> is a full-featured 3D game engine: includes built-in WebXR support, scene inspector, physics integration (Havok), GUI, post-processing, and TypeScript-first design. Higher-level abstractions reduce boilerplate. <strong>Three.js</strong> is a lower-level 3D rendering library: closer to raw WebGL, requires more manual setup for XR, physics, and UI. Three.js is more lightweight and flexible for custom rendering needs. Babylon.js is better for rapid XR development with batteries included; Three.js for precise control over the rendering pipeline."
+},
+{id:85, tags:['short','design'], type:'short',
+  q:"What are affordances and give two examples specific to VR interaction design?",
+  ans:"<strong>Affordances</strong> are perceptual properties of objects that signal possible interactions — what you can do with them. James Gibson's concept: objects 'afford' certain actions. In VR: (1) A virtual button that glows and slightly depresses when approached affords pressing — visual feedback communicates that it's interactive and how to interact. (2) A virtual door handle at grip height with realistic appearance affords grabbing and pulling — familiar real-world mapping. Good VR affordances reduce need for tutorials and support intuitive discovery of interactions."
+},
+
+// ── ADDITIONAL MCQs ─────────────────────────────────────────────────────────
+{id:86, tags:['technical','w5'], type:'mcq',
+  q:"Quest 3 is classified as what type of device?",
+  opts:["Tethered PC VR headset","Standalone VR headset","Enterprise AR headset","Mobile phone-based VR"],
+  ans:1, exp:"Meta Quest 3 is a standalone VR headset — self-contained with its own processor, no PC required. It also supports mixed reality passthrough."
+},
+{id:87, tags:['design','w3'], type:'mcq',
+  q:"VRSQ (VR Sickness Questionnaire) was developed specifically to:",
+  opts:["Replace IPQ in all VR studies","Measure VR-specific sickness symptoms as an adaptation of SSQ","Evaluate locomotion comfort","Measure social presence"],
+  ans:1, exp:"VRSQ was developed as a shorter, VR-specific adaptation of SSQ, targeting symptoms most relevant to modern HMD-based VR rather than older simulator contexts."
+},
+{id:88, tags:['theory','w9'], type:'mcq',
+  q:"Which hardware type enables the richest natural hand interaction in VR?",
+  opts:["Haptic gloves","Eye tracking","Room-scale tracking","Body trackers"],
+  ans:0, exp:"Haptic gloves provide the richest experience: hand tracking (knowing finger positions) PLUS haptic feedback (simulating touch/resistance) enables both natural manipulation and tactile sensation."
+},
+{id:89, tags:['technical','w4'], type:'mcq',
+  q:"WebGPU is best described as:",
+  opts:["A Unity plugin for web deployment","The next-generation browser GPU API succeeding WebGL","A VR-specific rendering standard","An AR tracking framework"],
+  ans:1, exp:"WebGPU is the next-generation browser GPU API with lower-level GPU access, compute shaders, and better performance than WebGL. It's the future of web-based 3D graphics."
+},
+{id:90, tags:['design','w10'], type:'mcq',
+  q:"Which method is most appropriate for understanding the 'why' behind user behavior in VR studies?",
+  opts:["Likert questionnaires","Physiological sensors","Semi-structured interviews","Reaction time measurement"],
+  ans:2, exp:"Semi-structured interviews allow deep exploration of why users felt/behaved as they did — capturing motivations, mental models, and nuanced experiences that numbers can't explain."
+},
+{id:91, tags:['technical','w6'], type:'mcq',
+  q:"The view frustum in VR differs from standard 3D rendering because:",
+  opts:["VR uses lower polygon counts","Each eye's frustum is asymmetric (off-axis) due to IPD offset","VR cameras have higher FOV only","VR uses orthographic not perspective projection"],
+  ans:1, exp:"Standard rendering assumes camera centered on display (symmetric frustum). VR HMD IPD means each eye is offset, requiring off-axis asymmetric frustums for correct stereo depth."
+},
+{id:92, tags:['theory','w2'], type:'mcq',
+  q:"Spatial Presence is best defined as:",
+  opts:["Feeling that virtual agents are real people","The sense of being physically located within the virtual environment","Technical tracking precision of the headset","The degree of narrative believability"],
+  ans:1, exp:"Spatial Presence = the subjective experience of feeling physically situated within the virtual space ('my body is here'). It's a core component of VR presence measured by IPQ."
+},
+{id:93, tags:['design','w9'], type:'mcq',
+  q:"A VR experience where the user physically stays still but their virtual avatar walks using joystick is most likely to cause:",
+  opts:["High presence and no cybersickness","High cybersickness due to vestibular-visual conflict","Flow state disruption only","Improved sense of embodiment"],
+  ans:1, exp:"Joystick continuous movement = visual motion (VR moving) with no physical movement (vestibular stationary) = maximum sensory conflict = highest cybersickness risk."
+},
+{id:94, tags:['technical','w5'], type:'mcq',
+  q:"Snap Lens Studio uses which programming language for scripting?",
+  opts:["C#","Python","TypeScript","GDScript"],
+  ans:2, exp:"Snap Lens Studio uses TypeScript for AR lens scripting, aligning with web technology and enabling familiar JavaScript-ecosystem development."
+},
+{id:95, tags:['design','w3'], type:'mcq',
+  q:"Which quantitative method provides the MOST continuous real-time data during a VR session?",
+  opts:["Post-session questionnaire","Think-aloud protocol","Physiological monitoring (heart rate, EDA)","Semi-structured interview"],
+  ans:2, exp:"Physiological sensors (EDA, heart rate, eye tracking) provide millisecond-level continuous data throughout the session — far more granular than any post-hoc method."
+},
+{id:96, tags:['theory','w3'], type:'mcq',
+  q:"'Autotelic experience' in Flow means:",
+  opts:["Automatic controller input mapping","The activity is intrinsically rewarding — done for its own sake","Achieving goals automatically","Time passing faster than normal"],
+  ans:1, exp:"Autotelic (auto=self, telic=goal): the activity contains its own reward. In flow, people engage for the pure enjoyment of the activity, not for external rewards."
+},
+{id:97, tags:['technical','w4'], type:'mcq',
+  q:"Which tool is used to simulate XR hardware in a browser without a physical HMD?",
+  opts:["Babylon.js Inspector","WebXR API Emulator extension","OpenXR Runtime","Node.js debugger"],
+  ans:1, exp:"WebXR API Emulator is a browser extension allowing developers to simulate HMD head movement and controller input in Chrome/Firefox DevTools without physical hardware."
+},
+{id:98, tags:['design','w9'], type:'mcq',
+  q:"Model-based 3D virtual environments require which production pipeline steps? (select best answer)",
+  opts:["Only 360° photography","3D modelling, texturing, lighting, and optimization","Only shader writing","Only motion capture"],
+  ans:1, exp:"Model-based VE pipeline: 3D modelling (geometry creation) → texturing (surface appearance) → lighting (scene illumination) → optimization (LOD, draw call batching for performance)."
+},
+{id:99, tags:['theory','w3'], type:'mcq',
+  q:"The IPQ (Igroup Presence Questionnaire) measures presence across which subscales?",
+  opts:["Nausea, Oculomotor, Disorientation","Spatial Presence, Involvement, Realism","Challenge, Flow, Fatigue","Display, Tracking, Latency"],
+  ans:1, exp:"IPQ subscales: General Presence, Spatial Presence (SP), Involvement (INV), and Experienced Realism (REA). Some versions also include Social Presence."
+},
+{id:100, tags:['short','design'], type:'short',
+  q:"You are designing a VR training simulation for MRT station navigation. Which locomotion method would you recommend and why?",
+  ans:"<strong>Recommendation: IMU-based semi-natural walk-in-place</strong>. Rationale: (1) <strong>Authenticity</strong> — walking motion maps naturally to navigation training, reinforcing real behavior. (2) <strong>Low cybersickness</strong> — much lower sickness risk than joystick continuous movement. (3) <strong>Presence</strong> — higher presence than teleportation, which would break the navigation learning context. (4) <strong>Feasibility</strong> — room-scale real walking is too constrained for a full MRT station simulation; IMU is the best practical compromise. Mitigation: add vignette effect during faster movements, allow speed adjustment."
+},
+{id:101, tags:['short','technical'], type:'short',
+  q:"Explain how ECS differs from OOP with a concrete XR example.",
+  ans:"In <strong>OOP</strong>, a 'VRPlayer' class might inherit from 'MovableObject' → 'PhysicsObject' → 'Entity', tightly coupling movement, physics, and input. Adding fire-breath requires modifying the hierarchy. In <strong>ECS</strong>: the player Entity has components: <code>TransformComponent</code>, <code>PhysicsComponent</code>, <code>InputComponent</code>, <code>RenderComponent</code>. Systems operate on entities with specific components: <code>MovementSystem</code> processes entities with Transform+Input. Adding fire-breath = add <code>FireBreathComponent</code> + <code>FireBreathSystem</code>, no other classes modified. This composition-based approach makes XR object behaviors highly reusable and modifiable at runtime (e.g., temporarily removing PhysicsComponent when a player grabs something)."
+},
+{id:102, tags:['theory','w2'], type:'mcq',
+  q:"Which statement best describes the RV Continuum?",
+  opts:["A binary distinction between VR and AR","A multidimensional spectrum from real to virtual environments, with Mixed Reality in between","A hardware classification system for headsets","A framework for measuring cybersickness severity"],
+  ans:1, exp:"Milgram & Kishino's RV Continuum is a spectrum (not binary) from Real Environment → AR → Augmented Virtuality → Virtual Environment, classifiable across 4 dimensions."
+},
+{id:103, tags:['design','w9'], type:'mcq',
+  q:"Why do 360° treadmills have minimal cybersickness risk?",
+  opts:["They use teleportation internally","They allow real physical walking movement in any direction, matching visual motion","They cap movement speed","They use eye-tracking to adjust FOV dynamically"],
+  ans:1, exp:"360° treadmills allow actual physical walking in any direction — the physical vestibular sensation matches the visual movement, eliminating sensory conflict that causes cybersickness."
+},
+];
+
+// ══ PROJECT QUESTIONS ════════════════════════════════════════════════════════
+const projectQuestions = [
+
+// ── IPA 1 ──────────────────────────────────────────────────────────────────
+{id:200, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, which Babylon.js class was used to create the 360° immersive background environment?",
+  opts:["SkyBox","VideoDome","Skymap","EnvironmentTexture"],
+  ans:1, exp:"VideoDome accepts an equirectangular video (MP4) and renders it as a spherical environment surrounding the scene — used for Task 4."
+},
+{id:201, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, which WebXR session mode was configured?",
+  opts:["inline","immersive-ar","immersive-vr","passthrough"],
+  ans:2, exp:"The IPA1 app used sessionMode: 'immersive-vr' in the uiOptions of createDefaultXRExperienceAsync."
+},
+{id:202, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, how was the real-time sphere-to-dragon distance updated every frame?",
+  opts:["setInterval() every 100ms","scene.onBeforeRenderObservable.add()","A WebWorker timer","requestAnimationFrame() callback"],
+  ans:1, exp:"scene.onBeforeRenderObservable fires before every render frame — used to compute Vector3.Distance(sphere.position, dragon.position) and update the TextBlock each frame."
+},
+{id:203, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, which behavior was attached to the sphere to enable mouse dragging on a horizontal plane?",
+  opts:["GravityBehavior","SixDofDragBehavior","PointerDragBehavior","AttachToBoneBehavior"],
+  ans:2, exp:"PointerDragBehavior with dragPlaneNormal set to the Y-axis and useObjectOrientationForDragging: false enabled horizontal plane dragging."
+},
+{id:204, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, why was the Dragon GLB model loaded asynchronously after scene creation?",
+  opts:["Babylon.js does not support synchronous loading","To avoid blocking the render loop while the model downloads","The model was too large for synchronous loading","To comply with WebXR session requirements"],
+  ans:1, exp:"Loading the model synchronously would freeze the render loop. Using SceneLoader.ImportMeshAsync() lets the render loop continue while the model downloads in the background."
+},
+{id:205, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1 testing, why was NullEngine used instead of the standard Engine?",
+  opts:["NullEngine runs faster on CI servers","NullEngine avoids requiring a WebGL canvas and GPU context in headless test environments","NullEngine has built-in WebXR support","NullEngine produces smaller bundle sizes"],
+  ans:1, exp:"Unit tests run in Node.js without a browser DOM or GPU. NullEngine is Babylon.js's headless engine that skips actual rendering, allowing scene logic to be tested without WebGL."
+},
+{id:206, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, how was the XR helper stored for test accessibility?",
+  opts:["As a global variable window.xrHelper","In scene.metadata.xrHelper","In localStorage","As a module-level export"],
+  ans:1, exp:"The XR helper was stored in scene.metadata.xrHelper — Babylon.js's metadata bag on the scene object — so tests could retrieve it without importing private class state."
+},
+{id:207, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, what triggers the ActionManager's OnPickTrigger on the sphere?",
+  opts:["Hovering over the mesh","Clicking or selecting the mesh (pointer down)","Double-clicking the mesh","Dragging the mesh"],
+  ans:1, exp:"OnPickTrigger fires when the user clicks/selects (pointer down) on the mesh. Combined with ExecuteCodeAction, this changes the sphere's color and scale."
+},
+{id:208, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, which Babylon.js package was needed to load GLB/GLTF files?",
+  opts:["@babylonjs/materials","@babylonjs/gui","@babylonjs/loaders","@babylonjs/serializers"],
+  ans:2, exp:"@babylonjs/loaders provides the glTF loader plugin. Without importing '@babylonjs/loaders/glTF', SceneLoader.ImportMeshAsync() cannot parse GLB/GLTF files."
+},
+{id:209, tags:['projects','ipa1','short'], type:'short',
+  q:"Describe how Task 7 of IPA1 was implemented — specifically how real-time distance tracking worked.",
+  ans:"Task 7 required displaying the distance between the sphere and the Dragon model as a UI label that updated every frame. Implementation: (1) <strong>AdvancedDynamicTexture.CreateFullscreenUI()</strong> created a full-screen GUI overlay. (2) A <strong>TextBlock</strong> was added with yellow text formatted as 'd: X.XX'. (3) <strong>scene.onBeforeRenderObservable.add()</strong> registered a callback that fired every frame — inside, <code>Vector3.Distance(sphere.position, dragon.position)</code> computed the 3D Euclidean distance, which was formatted with <code>.toFixed(2)</code> and assigned to the TextBlock's text property."
+},
+{id:210, tags:['projects','ipa1'], type:'mcq',
+  q:"In IPA1, what was the teleportation time configured to?",
+  opts:["500 ms","1000 ms","2000 ms","3000 ms"],
+  ans:2, exp:"teleportationOptions.timeToTeleport was set to 2000 (2 seconds) — the duration of the teleportation animation/transition."
+},
+
+// ── IPA 2 ──────────────────────────────────────────────────────────────────
+{id:211, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, Edwin implemented chromatic aberration by:",
+  opts:["Rendering the scene three times in different colors","Sampling R, G, B channels at slightly different UV offsets in the GLSL shader","Applying separate cameras for red, green, blue channels","Using a color-grading LUT texture"],
+  ans:1, exp:"Different wavelengths refract at different angles. The shader samples each RGB channel at a slightly offset UV coordinate (proportional to aberration strength), producing color fringing at the periphery."
+},
+{id:212, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2's HMD simulator, k2 in the distortion formula (1 + k1·r² + k2·r⁴) primarily affects:",
+  opts:["Distortion at the centre of the lens","Distortion at the edges/periphery of the lens","Chromatic aberration strength","The virtual image distance"],
+  ans:1, exp:"k2 multiplies r⁴ — a higher-order term that becomes significant only at larger radii (peripheral areas). k1·r² dominates near the center."
+},
+{id:213, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, the 'No-Distortion Toggle' works by:",
+  opts:["Switching to a different shader","Setting k1 and k2 to zero while saving their previous values for restoration","Rendering without post-processing","Resetting all HMD parameters to factory defaults"],
+  ans:1, exp:"The toggle saves current k1/k2 values, then sets both to 0 (no distortion). Toggling again restores the saved values — enabling instant visual comparison between corrected and uncorrected views."
+},
+{id:214, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, why does each eye camera require a different (off-axis) projection matrix?",
+  opts:["Each eye has a different focal length in the simulator","IPD offsets each eye from the display centre, requiring asymmetric frustums","The left and right displays have different resolutions","To apply different distortion coefficients per eye"],
+  ans:1, exp:"IPD places each eye to the left/right of the display center. A symmetric (standard) projection would be incorrect. Off-axis projection shifts each frustum to correctly simulate the eye's viewpoint through the lens."
+},
+{id:215, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, what is the purpose of the layerMask system?",
+  opts:["To control audio volume per layer","To selectively render different sets of meshes to different cameras","To apply different post-processing effects per scene layer","To manage texture resolution based on camera distance"],
+  ans:1, exp:"Each camera has a layerMask bitmask. Meshes also have layerMasks. A mesh is only rendered by a camera if their bitmasks share a set bit — allowing eye cameras to exclude HMD hardware meshes, etc."
+},
+{id:216, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, what happens visually when the grid overlay is enabled?",
+  opts:["A 2D grid appears behind all objects","Both the shader-based procedural grid and 3D wireframe meshes at lens positions become visible","Only the 3D frustum wireframes are shown","A heads-up coordinate grid appears in the corner"],
+  ans:1, exp:"Edwin's dual grid implementation: toggling 'Grid' both (1) sets showGrid uniform in the eye-viewport post-process shaders and (2) shows 3D wireframe grid meshes positioned at the physical lens locations, making distortion shape obvious."
+},
+{id:217, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, RenderTargetTexture is used for:",
+  opts:["Applying texture to the HMD mesh","Rendering each eye view off-screen before compositing into the viewport","Storing Gaussian splat point cloud data","Caching the barrel distortion lookup table"],
+  ans:1, exp:"Each eye camera renders to a RenderTargetTexture (off-screen render target). The resulting texture is then displayed in a Picture-in-Picture viewport on the main canvas."
+},
+{id:218, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, main.ts uses WebGPU detection. What happens if WebGPU is unavailable?",
+  opts:["The app refuses to start and shows an error","Falls back to WebGL2 via the standard Babylon.js Engine","Falls back to software rendering","Redirects to a mobile-only version"],
+  ans:1, exp:"main.ts detects WebGPU availability (import.meta.env checks + WebGPUEngine.IsSupportedAsync). If unavailable, it creates a standard WebGL Engine — graceful degradation."
+},
+{id:219, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, the UI module is decoupled from the scene by:",
+  opts:["Using a REST API between modules","UI has no direct scene access; calls App methods only, with updates via Observable","UI reads from localStorage written by App","Using a shared global state object"],
+  ans:1, exp:"ui.ts has no reference to the Babylon.js scene. It calls App methods (e.g., app.updateHMDEyeCameraViewports()) and receives updates via hmd.onValuesUpdatedObservable — clean separation of concerns."
+},
+{id:220, tags:['projects','ipa2','short'], type:'short',
+  q:"Explain what chromatic aberration is and how Edwin simulated it in the IPA2 HMD simulator shader.",
+  ans:"<strong>Chromatic aberration</strong> is an optical phenomenon where a lens refracts different wavelengths (colors) of light at slightly different angles. This causes color fringing at the edges of images, particularly noticeable at high-contrast boundaries. In IPA2, Edwin simulated it in the GLSL post-process shader by sampling the R, G, and B channels of the eye-render texture at <strong>slightly different UV offsets</strong>, each proportional to a chromatic aberration strength uniform. R (longest wavelength) gets the largest offset, G medium, B (shortest) smallest. This produces visible color fringing at the lens periphery, with the strength controlled by a slider."
+},
+{id:221, tags:['projects','ipa2'], type:'mcq',
+  q:"The Google Cardboard V2 preset in IPA2 uses which focal length?",
+  opts:["25 mm","35 mm","43 mm","55 mm"],
+  ans:2, exp:"Google Cardboard V2 preset: f = 43 mm (0.043 m) focal length."
+},
+{id:222, tags:['projects','ipa2'], type:'mcq',
+  q:"In IPA2, Gaussian splat files (.splat) are loaded using:",
+  opts:["SceneLoader.ImportMeshAsync() with default settings","SceneLoader with a registered SPLATFileLoader plugin","Three.js's GLTFLoader","A custom fetch + ArrayBuffer parser"],
+  ans:1, exp:"SceneLoader.RegisterPlugin(new SPLATFileLoader()) registers the plugin, after which SceneLoader can load .splat point-cloud files as 3D Gaussian splat scenes."
+},
+{id:223, tags:['projects','ipa2','short'], type:'short',
+  q:"Describe IPA2's rendering pipeline from scene to the user seeing a distortion-corrected eye view.",
+  ans:"<ol><li><strong>Scene render</strong>: Main camera renders the full 3D scene (primitives or Gaussian splat) with appropriate layerMasks.</li><li><strong>Eye camera render</strong>: Left and right FreeCamera instances each render their view (with off-axis asymmetric projection matrices based on HMD IPD) into separate <strong>RenderTargetTextures</strong>.</li><li><strong>Post-processing</strong>: A <strong>PostProcess</strong> shader is applied to each eye's RenderTargetTexture. The GLSL shader applies barrel distortion (k1, k2) and chromatic aberration (per-channel offset) and optionally draws a procedural grid.</li><li><strong>Viewport display</strong>: The post-processed eye textures are shown in Picture-in-Picture viewports on the main canvas — left eye ~20–45% from left, right eye mirrored.</li></ol>"
+},
+
+// ── TP ──────────────────────────────────────────────────────────────────────
+{id:224, tags:['projects','tp'], type:'mcq',
+  q:"In the TP Rec Room study, what research design was used?",
+  opts:["Between-subject (different participants per platform)","Within-subject (each participant used both platforms)","Mixed design (some within, some between)","Longitudinal (same participants over 6 months)"],
+  ans:1, exp:"Within-subject design: all 10 participants experienced both Quest 3 VR and PC desktop conditions, with counterbalanced order (PC first → Quest 3)."
+},
+{id:225, tags:['projects','tp'], type:'mcq',
+  q:"In the TP study, Edwin's specific role was:",
+  opts:["Overall study coordinator","Spatial Presence subteam theory","Flow subteam data analyst","Comfort/Cybersickness design analyst"],
+  ans:2, exp:"Edwin Lee Zirui was the Flow Subteam Data Analyst — responsible for Flow construct data collection instrument design, data analysis, and interpretation."
+},
+{id:226, tags:['projects','tp'], type:'mcq',
+  q:"In the TP study's Flow scale, which item measures the 'temporal distortion' dimension of Flow?",
+  opts:['"I was completely focused"','"I felt in control"','"I lost track of time"','"Difficulty matched my ability"'],
+  ans:2, exp:"'I lost track of time' (sourced from FSS — Flow State Scale) measures temporal distortion — one of Csikszentmihalyi's 8 Flow dimensions where time perception distorts during deep engagement."
+},
+{id:227, tags:['projects','tp'], type:'mcq',
+  q:"The TP study found that Flow scores between Quest 3 and PC were:",
+  opts:["Significantly higher on Quest 3 (>1.0 difference)","Significantly higher on PC","Negligibly different (+0.12, essentially equal)","Quest 3 lower than PC by 0.5"],
+  ans:2, exp:"Quest 3 Flow mean: 5.22 (SD 0.43), PC: 5.10 (SD 0.56). Difference of +0.12 is negligible — flow can be achieved equally on both platforms with good UX."
+},
+{id:228, tags:['projects','tp'], type:'mcq',
+  q:"Which symptom showed the LARGEST relative increase in Quest 3 vs PC?",
+  opts:["Headache","Fatigue","Dizziness","Nausea"],
+  ans:3, exp:"Nausea was 3.5× higher on Quest 3 (0.70 vs PC 0.20) — concentrated in participants doing free-roaming activities. Eye strain was 2.5× higher."
+},
+{id:229, tags:['projects','tp'], type:'mcq',
+  q:"In the TP study, why was dizziness/disorientation minimal on both platforms?",
+  opts:["Participants were experienced VR users","Rec Room's conservative locomotion design (snap turning, comfort options) effectively prevented it","The study duration was too short","Participants were pre-screened for motion sickness resistance"],
+  ans:1, exp:"Rec Room implements comfort-focused locomotion — snap rotation, optional vignette, teleportation options. This successfully kept dizziness scores near zero (<0.2) on both platforms."
+},
+{id:230, tags:['projects','tp'], type:'mcq',
+  q:"Spatial Presence was higher on Quest 3. Which item showed the LARGEST advantage for VR?",
+  opts:["'Sense of being in environment' (Item 1)","'Feeling surrounded by environment' (Item 6)","'Ability to interact naturally' (Item 4)","'Perceived realism' (Item 2)"],
+  ans:1, exp:"Item 6 ('Feeling surrounded by environment') showed +0.9 advantage for Quest 3, and Item 3 ('Feeling physically located') showed +0.7. Item 1 was identical (5.6) on both."
+},
+{id:231, tags:['projects','tp'], type:'mcq',
+  q:"The TP study found that overall comfort ratings were similar despite higher symptoms on Quest 3. This suggests:",
+  opts:["Participants were lying on the comfort scale","Participants distinguished between enjoyment/overall experience and physical discomfort","The symptom scale was miscalibrated","Both platforms were equally comfortable"],
+  ans:1, exp:"Participants rated overall comfort similarly (5.70 vs 5.50) despite Quest 3 having 2× the symptom burden. They appeared to evaluate 'comfort' holistically (enjoyment) separate from specific physical symptoms."
+},
+{id:232, tags:['projects','tp'], type:'mcq',
+  q:"The TP Flow scale items were sourced from which instruments?",
+  opts:["IPQ and SSQ","FSS, FKS, and GameFlow","Only the original Csikszentmihalyi questionnaire","Custom-created items only"],
+  ans:1, exp:"The 6-item Flow scale drew from: FSS (Flow State Scale) — concentration, unambiguous feedback, temporal distortion; FKS (Flow Kurzskala) — sense of control, challenge-skill balance; GameFlow — clear goals."
+},
+{id:233, tags:['projects','tp'], type:'mcq',
+  q:"Why was fatigue higher on Quest 3 than PC (0.40 vs 0.00)?",
+  opts:["Quest 3 has higher graphical complexity requiring more mental effort","Physical weight of the HMD and thermal load from wearing the device","Quest 3 activities were longer in duration","Participants had less experience with VR"],
+  ans:1, exp:"The HMD's physical weight on the head and the thermal load from wearing an enclosed headset causes physical fatigue not present in PC gaming. No participants reported fatigue on PC."
+},
+{id:234, tags:['projects','tp','short'], type:'short',
+  q:"Explain the key finding about Flow in the TP study and what it implies for XR design.",
+  ans:"The TP study found a <strong>negligible difference</strong> in Flow scores between Quest 3 VR (M=5.22) and PC (M=5.10) — a gap of only +0.12. Despite VR providing significantly higher spatial presence (+0.49), this did not translate into higher Flow. <strong>Implication</strong>: Flow is driven by UX factors — clear goals, challenge-skill balance, feedback quality — that can be achieved on either platform with good design. Hardware alone (even immersive VR) does not guarantee higher engagement or flow. Designers should prioritize UX fundamentals (good feedback, appropriate difficulty, clear objectives) regardless of platform, as these drive flow more than presence or immersion level."
+},
+{id:235, tags:['projects','tp','short'], type:'short',
+  q:"Describe the cybersickness findings from the TP study and explain why nausea was higher on Quest 3 for specific participants.",
+  ans:"The TP study found Quest 3 produced ~2× higher symptom burden (sum score 2.40) vs PC (1.10). <strong>Nausea</strong> was 3.5× higher on Quest 3 — but concentrated in participants P003 and P004 who engaged in <strong>free-roaming activities</strong> with continuous locomotion. This aligns with sensory conflict theory: joystick-driven continuous movement in VR creates maximum vestibular-visual conflict (eyes see motion, body is stationary). <strong>Eye strain</strong> (2.5× higher) was linked to visually demanding tasks requiring sustained visual attention (Disc Golf, aiming). Dizziness was minimal because Rec Room's snap-turn and teleportation options reduced rotational sensory conflict."
+},
+{id:236, tags:['projects','tp'], type:'mcq',
+  q:"The TP study used a within-subject design. What is the main advantage of this over a between-subject design?",
+  opts:["Larger sample size","Each participant acts as their own control, eliminating individual difference confounds","Faster to run since fewer participants needed","Avoids counterbalancing order effects"],
+  ans:1, exp:"Within-subject: same participants experience both conditions, so individual differences (VR experience, motion sickness susceptibility, game skill) don't confound the platform comparison. Each person's PC vs Quest 3 scores are directly compared."
+},
+{id:237, tags:['projects','tp'], type:'mcq',
+  q:"In the TP study, binary discomfort indicator for Quest 3 was:",
+  opts:["20% reported any discomfort","50% reported any discomfort","70% reported any discomfort","90% reported any discomfort"],
+  ans:2, exp:"70% of Quest 3 participants (7/10) reported at least one symptom. PC was 50% (5/10). Despite this, overall comfort ratings were similar — participants separated physical symptoms from general enjoyment."
+},
+
+];
+
+// Merge project questions into main array
+questions.push(...projectQuestions);
+
+// ══ MDQ QUESTIONS (from actual lecturer slides — highest exam priority) ════
+const mdqQuestions = [
+
+// ── W10-12 Case Studies MDQ (Chek Tien TAN) ─────────────────────────────────
+{id:300, tags:['mdq','w10','design'], type:'mcq',
+  q:"Before deciding locomotion, visuals, or hardware for a VR commuting simulator, what should be established first?",
+  opts:["The target headset with the highest fidelity","Experiential goals grounded in stakeholder needs","The final questionnaire items for data analysis","The full asset list for the environment"],
+  ans:1, exp:"Design always starts with stakeholder-grounded experiential goals (Presence, Flow, Cybersickness targets). Technology choices follow from goals — never the other way around."
+},
+{id:301, tags:['mdq','w10','design'], type:'mcq',
+  q:"In the VR commuting simulator case study, which design goal most directly maps to Flow rather than Presence or Cybersickness?",
+  opts:["Feel like actually in Singapore HDBs","Minimal nausea and disorientation symptoms","Clear goals and fluent performance during commute","Locomotion close to real walking"],
+  ans:2, exp:"Clear goals and fluent performance = Flow (clear goals + challenge-skill balance + action-awareness merging). 'Feel like in HDBs' = Presence. 'Minimal nausea' = Cybersickness. 'Close to real walking' = Presence."
+},
+{id:302, tags:['mdq','w10','design'], type:'mcq',
+  q:"To support both 'locomotion close to real walking' and 'clear goals and fluent performance during commute,' which implementation direction best fits the case study?",
+  opts:["Create a semi-natural walking technique that is easy to operate","Maximise environmental detail before deciding any interaction technique","Replace user control with a fully scripted commute path","Prioritise seated comfort over the commuting scenario itself"],
+  ans:0, exp:"Semi-natural walking (IMU-based) is easy to operate (supports Flow/clear goals) and close to real walking (supports Presence). The other options contradict the design goals."
+},
+{id:303, tags:['mdq','w10','design'], type:'mcq',
+  q:"The commuting simulator treats minimal nausea and disorientation as a key experiential goal. Which TWO approaches align with the slides and cited mitigation research?",
+  opts:["Prototype mitigation methods grounded in prior research","Use static peripheral blur as one mitigation option","Increase camera shake so walking feels more realistic","Widen the field of view during motion","Focus only on visual polish because cybersickness is secondary"],
+  ans:0, exp:"Correct: (1) Prototype research-grounded mitigation methods, and (2) Use static peripheral blur. Camera shake worsens sickness. Widening FOV during motion can worsen sickness. Ignoring cybersickness contradicts the design goal."
+},
+{id:304, tags:['mdq','w10','design'], type:'mcq',
+  q:"In the commuting simulator case study, why should data collection be chosen based on the experiential goals rather than reused generically?",
+  opts:["Because each goal such as Presence, Flow, or Cybersickness needs measures that test whether that specific goal was achieved","Because generic surveys are invalid in every immersive study","Because hardware performance metrics alone are enough for immersion evaluation","Because data analysis should happen before deciding what to measure"],
+  ans:0, exp:"Each experiential goal (Presence → IPQ, Flow → Flow scales, Cybersickness → SSQ/VRSQ) requires specific instruments that directly test whether that goal was achieved. Generic reuse may miss what matters."
+},
+{id:305, tags:['mdq','w10','design'], type:'mcq',
+  q:"Dementia Singapore wanted the experience to reach as many users as possible. How did the team balance accessibility with immersion goals?",
+  opts:["Built only a high-end VR version to maximise immersion","Designed both VR and Desktop versions while preserving the same design intent","Switched to a passive 360-degree video with no interactivity","Removed the empathy-focused scenarios to simplify deployment"],
+  ans:1, exp:"The team built both VR and Desktop versions with the same design intent (empathy narrative, interaction style) — VR for maximum immersion, Desktop for wider reach. Neither version sacrificed the core design goals."
+},
+{id:306, tags:['mdq','w10','design'], type:'mcq',
+  q:"What implementation choice most directly supports the goal of minimal physiological discomfort in Experience Dementia?",
+  opts:["Free locomotion with joystick turning","Point-and-click interaction with stable viewpoint changes","Rich controller mechanics to increase interaction complexity","Longer sessions so users gradually adapt to discomfort"],
+  ans:1, exp:"Point-and-click with stable viewpoint changes eliminates continuous locomotion — the primary cause of cybersickness. Stable viewpoints = no vestibular-visual conflict during transitions."
+},
+{id:307, tags:['mdq','w10','design'], type:'mcq',
+  q:"Which design decision best supports stronger Presence in VR than Desktop without requiring elaborate controller interaction?",
+  opts:["Provide essential viewpoint control and first-person framing","Add more menus and settings panels for the user to explore","Use third-person observation to simplify embodiment","Keep VR and Desktop visually identical by removing perspective differences"],
+  ans:0, exp:"First-person perspective + viewpoint control are the minimal requirements for spatial presence and embodiment. Third-person breaks presence. Identical visuals remove the main VR advantage (360° field, depth)."
+},
+{id:308, tags:['mdq','w10','design'], type:'mcq',
+  q:"In a comparative study of VR versus Desktop for the dementia empathy experience, which outcome best evaluates whether VR adds unique value beyond accessibility?",
+  opts:["Attitude or empathy change toward people living with dementia","Frame rate benchmark scores","Polygon count of the environment","Whether users finished the session fastest"],
+  ans:0, exp:"The purpose was empathy generation. Only measuring empathy/attitude change tests whether VR actually achieves the core design goal better than Desktop. Technical metrics don't evaluate experiential value."
+},
+{id:309, tags:['mdq','w10','design'], type:'mcq',
+  q:"Which sequence best matches the methodology for designing for immersion demonstrated across the commuting and dementia case studies?",
+  opts:["Implement then Design then Analyse then Collect data","Design immersion goals from stakeholder needs, then Implement to support those goals, then Collect data matched to each immersion dimension, then Analyse conclusions","Collect data then Choose hardware then Design goals then Analyse","Design visuals then Implement locomotion then Skip evaluation then Present conclusions"],
+  ans:1, exp:"The consistent pipeline: (1) Design goals from stakeholder needs → (2) Implement to support those goals → (3) Collect data matched to each immersion dimension → (4) Analyse. This applies to both case studies and enterprise examples."
+},
+
+// ── W10 Sean Chen (Meta) MDQ ─────────────────────────────────────────────────
+{id:310, tags:['mdq','w10','design'], type:'mcq',
+  q:"Before any implementation decisions, the case studies emphasise a common first step. What is it?",
+  opts:["Choose the VR hardware platform that maximises immersion","Identify all stakeholders and their needs related to immersion","Select a locomotion technique that minimises cybersickness","Decide between model-based and image-based rendering for visual fidelity"],
+  ans:1, exp:"The universal first step is stakeholder identification and needs analysis. Hardware, locomotion, and rendering are all implementation decisions that follow from understanding stakeholder needs."
+},
+{id:311, tags:['mdq','w10','design'], type:'mcq',
+  q:"Pfizer deployed VR training for COVID-19 vaccine manufacturing. How did the immersive approach compare to non-VR training?",
+  opts:["10–15% time savings and $5K savings per trainee","40–60% time savings on behavioural aseptic training and up to $23K savings per trainee/trainer pair","No measurable difference but higher trainee satisfaction","Faster training but lower knowledge retention"],
+  ans:1, exp:"Pfizer's VR training achieved 40–60% time savings on behavioural aseptic training and up to $23K savings per trainee/trainer pair — demonstrating significant ROI from immersive training."
+},
+{id:312, tags:['mdq','w10','design'], type:'mcq',
+  q:"Inspired Education Group deployed 2,000+ Meta Quest devices across 120 schools. Which finding highlights how immersion changes social dynamics in learning?",
+  opts:["94% of students learned better in VR","Students who were shy during regular lessons became more engaged and participative when immersed behind a headset","15% improvement on multiple choice questions","3% improvement in written answers"],
+  ans:1, exp:"The key social dynamics finding: shy students became more engaged behind headsets. Immersion behind an HMD reduced social anxiety, enabling participation from students who held back in traditional classroom settings."
+},
+{id:313, tags:['mdq','w10','design'], type:'mcq',
+  q:"In the TTSH blood-taking VR training, which implementation decision specifically supports Flow as a dimension of immersion?",
+  opts:["Replicating an actual clinical setting","Using controllers for higher accuracy during the procedure","Stable frame rate with simple textures","Multiplayer collaboration between trainees"],
+  ans:2, exp:"Stable frame rate + simple textures = consistent performance without interruptions. Dropped frames break flow. Flow requires uninterrupted, smooth engagement. Clinical setting replication supports Presence; multiplayer supports Social Presence."
+},
+{id:314, tags:['mdq','w10','design'], type:'mcq',
+  q:"The TTSH Emergency Rescue training uses full VR with multiplayer collaboration. Multiplayer most directly supports which concept of presence?",
+  opts:["Place Illusion (PI), because the virtual environment looks realistic","Social presence, because interacting with real colleagues creates a sense of being together","Plausibility Illusion (Psi), because the physics engine responds realistically","Cybersickness reduction, because multiplayer reduces visual-vestibular conflict"],
+  ans:1, exp:"Multiplayer = interacting with real colleagues represented in VR = Social Presence (sense of being with others). PI is about the virtual place looking real; Psi is about events feeling real — not about co-presence."
+},
+{id:315, tags:['mdq','w10','design'], type:'mcq',
+  q:"The TTSH CPR/BLS training uses 'Dynamic Rest Frame Vignetting' to address cybersickness. Why is this particularly important for CPR training in VR?",
+  opts:["CPR requires high visual fidelity, and vignetting improves rendering quality","Frequent head movement during CPR creates visual-vestibular conflict causing cybersickness, which vignetting reduces by narrowing peripheral field of view","Vignetting improves hand tracking accuracy during chest compressions","CPR sessions are long, and vignetting reduces eye strain"],
+  ans:1, exp:"CPR involves repeated bending down + looking at patient + checking monitors — frequent head movements. Each rapid head movement creates vestibular-visual conflict. Dynamic vignetting (narrows FOV during movement) reduces this conflict in real-time."
+},
+{id:316, tags:['mdq','w10','design'], type:'mcq',
+  q:"The TTSH CPR/BLS training combines 'X-Ray' internal anatomy visualisation with a haptic manikin. Both support which dimension of immersion?",
+  opts:["Flow","Cybersickness mitigation","Presence","Effectiveness"],
+  ans:2, exp:"X-Ray visualisation (seeing inside the virtual patient) and haptic manikin (physical sensation matching virtual action) both enhance Presence — specifically Plausibility Illusion (events feel real) and visuomotor synchrony."
+},
+{id:317, tags:['mdq','w10','design'], type:'mcq',
+  q:"In the TTSH blood-taking case study, 'I felt I had everything under control during the procedure' is linked to which immersion dimension and practical outcome?",
+  opts:["Presence, linked to spatial awareness","Flow (Engagement and Mastery), linked to muscle memory and fewer mistakes","Cybersickness, linked to comfort during the procedure","Effectiveness, linked to task completion rate"],
+  ans:1, exp:"'Sense of control' is a Flow dimension (from Csikszentmihalyi). In procedural training, Flow/mastery leads to muscle memory development and fewer procedural mistakes — the practical training outcome."
+},
+{id:318, tags:['mdq','w10','design'], type:'mcq',
+  q:"Sean Chen's presentation highlighted four key benefit areas of immersive enterprise training. Which of the following is NOT one of them?",
+  opts:["Lower costs and better outcomes through deeper immersive experiences","Safety at scale by simulating dangerous scenarios","Faster internet connectivity for streaming VR content","Soft skills through immersive MR experiences","Hard skills through immersive learning that boosts performance"],
+  ans:2, exp:"The four benefit areas: (1) Lower costs/better outcomes, (2) Safety at scale, (3) Soft skills via MR, (4) Hard skills via immersive learning. 'Faster internet connectivity' is infrastructure, not an immersive training benefit."
+},
+
+// ── W11 AI-powered Spatial Computing MDQ (Yethoven Tukimin, Meta) ──────────
+{id:319, tags:['mdq','w11','design'], type:'mcq',
+  q:"What is the primary role of an Enterprise Solutions Architect in an AI-powered spatial computing project?",
+  opts:["Writing all the source code for the 3D engine","Designing the final UI buttons for the headset","Coordinating project timelines and sprint planning","Bridging business goals with engineering realities to ensure successful scaling"],
+  ans:3, exp:"Solutions Architect = trusted technical advisor bridging business goals with engineering constraints. They ensure the solution is technically feasible, scalable, and actually solves the business problem — not just coding or UI design."
+},
+{id:320, tags:['mdq','w11','design'], type:'mcq',
+  q:"If you are the Engineering Lead on an immersive project, what is your primary concern?",
+  opts:["Whether end users find the system intuitive to use","How much the overall project costs","Ensuring API limits, framework constraints, and technical debt are managed","Whether the virtual environment is fun to play"],
+  ans:2, exp:"Engineering Lead = technical execution. Primary concerns: API rate limits, framework compatibility, technical debt accumulation, performance constraints. UX is the designer's domain; cost is the PM/business domain."
+},
+{id:321, tags:['mdq','w11','design'], type:'mcq',
+  q:"In the Foxconn case study, how did spatial computing provide massive ROI?",
+  opts:["By replacing all human workers with AI algorithms","By reducing costs through cheaper headset hardware","By allowing workers to watch movies on the factory floor","By eliminating expensive physical test runs using a highly accurate digital twin"],
+  ans:3, exp:"Foxconn used a digital twin of the factory — a highly accurate virtual replica — to test production line configurations virtually, eliminating costly physical test runs (which previously required actual factory downtime)."
+},
+{id:322, tags:['mdq','w11','design'], type:'mcq',
+  q:"Why do architects push heavy AI computing to the Cloud instead of running it directly on the VR headset?",
+  opts:["Enterprise security policies forbid local processing","Headsets cannot connect to Wi-Fi","To keep the headset lightweight, prevent overheating, and save battery life","Because cloud computing is completely free"],
+  ans:2, exp:"Standalone VR headsets (Quest 3) have limited CPU/GPU, battery, and thermal capacity. Heavy AI (LLM inference, computer vision) would drain battery in minutes and overheat. Cloud offloading keeps headsets lightweight and extends runtime."
+},
+{id:323, tags:['mdq','w11','design'], type:'mcq',
+  q:"What is the biggest advantage of using AI generative tools during the build phase of a spatial computing project?",
+  opts:["It writes the product requirements document for you","It removes the need for asset governance and approval","It automatically purchases server space","It reduces the creation time of complex 3D assets from weeks to seconds"],
+  ans:3, exp:"AI generative tools (text-to-3D, texture generation, AI-assisted modelling) dramatically accelerate 3D asset creation — from weeks of manual artist work to seconds of generation. This is the core productivity gain in the build phase."
+},
+{id:324, tags:['mdq','w11','design'], type:'mcq',
+  q:"What technology allows virtual characters or agents to have dynamic, unscripted reactions instead of repeating the same pre-programmed loop?",
+  opts:["Standard video streaming","Large Language Models (LLMs)","A larger library of pre-scripted animations","Simple WebXR rendering"],
+  ans:1, exp:"LLMs enable virtual agents to generate novel responses dynamically based on user input — no pre-scripted dialogue tree. Each interaction can be unique, making social/training VR scenarios much more realistic and replayable."
+},
+{id:325, tags:['mdq','w11','design'], type:'mcq',
+  q:"What is a unique privacy concern when deploying spatial headsets in a highly secure enterprise environment like a factory?",
+  opts:["Users might forget their email passwords","The headsets cannot connect to Bluetooth","Only login credentials need protection","The headsets continuously map the physical room, potentially exposing secret factory layouts"],
+  ans:3, exp:"VR headsets use simultaneous localization and mapping (SLAM) — they continuously 3D-scan and map the environment. In a factory, this could capture proprietary manufacturing layouts, confidential equipment arrangements, or classified facilities."
+},
+{id:326, tags:['mdq','w11','design'], type:'mcq',
+  q:"Why is a Content Delivery Network (CDN) critical when deploying a spatial computing application?",
+  opts:["It quickly streams massive 3D asset files to users without causing lag","It automatically load-balances AI generation APIs during peak traffic","It generates the AI prompts automatically","It replaces the need for an internet connection"],
+  ans:0, exp:"3D spatial computing apps have massive assets (Gaussian splats, high-poly models, textures). A CDN caches these assets geographically close to users, enabling fast streaming without buffering lag — critical for XR where loading pauses break immersion."
+},
+{id:327, tags:['mdq','w11','design'], type:'mcq',
+  q:"Unlike a standard 2D website, what new kind of user data can be measured in a spatial computing application?",
+  opts:["The brand of monitor they are using","How many times they click a mouse","Their 6-Degrees-of-Freedom physical movement and spatial interaction heatmaps","How long they stayed in the experience overall"],
+  ans:2, exp:"Spatial computing uniquely captures 6-DOF movement (head position/rotation, hand position, gaze direction) and can generate spatial heatmaps showing where users look, walk, reach — rich behavioural data impossible in 2D web analytics."
+},
+{id:328, tags:['mdq','w11','design'], type:'mcq',
+  q:"Ultimately, what defines a truly successful enterprise spatial application?",
+  opts:["Having the highest possible polygon count","Using the newest headset hardware regardless of operational need","Avoiding the use of any AI tools","Delivering a secure, scalable solution that directly solves a foundational business problem"],
+  ans:3, exp:"Success = business value. Polygon count, latest hardware, and AI tools are means, not ends. A successful enterprise deployment is secure (data protection), scalable (many users), and solves a real business problem (training efficiency, safety, cost)."
+},
+{id:329, tags:['mdq','w11','design'], type:'mcq',
+  q:"Which AI-generated PRD user story best reflects good immersive training design?",
+  opts:[
+    "'As a trainee, I want to complete tasks with personalized AI guidance, so that I can learn more effectively.'",
+    "'As a trainee, I want to identify hazards while remaining oriented and comfortable in the virtual environment, so I can complete the inspection task without feeling sick after some time.'",
+    "'The world should contain as many interactive objects as possible.'",
+    "'The graphics should use the highest polygon count available to have the best experience.'"
+  ],
+  ans:1, exp:"Option B is the only user story that embeds immersion goals (remaining oriented = cybersickness, comfortable = comfort, identifying hazards = task effectiveness) into the acceptance criteria. The others are technical specs, not experience-centred requirements."
+},
+{id:330, tags:['mdq','w11','design'], type:'mcq',
+  q:"Which acceptance criterion best aligns a PRD with immersion and user experience goals?",
+  opts:[
+    "'The experience uses WebXR and deploys successfully.'",
+    "'The application contains at least 20 interactive objects.'",
+    "'Important interaction cues remain within a comfortable viewing region, rapid head-turn requirements are minimized, and pilot users report lower discomfort while completing the task.'",
+    "'The generated code compiles and passes build checks.'"
+  ],
+  ans:2, exp:"Option C includes both design constraints (cues in comfortable region, minimized head-turns) and empirical validation (pilot users report lower discomfort). Technical pass/fail criteria (deploy, compile) tell you nothing about immersion quality."
+},
+{id:331, tags:['mdq','w11','design'], type:'mcq',
+  q:"Which sequence best represents an evidence-informed AI development loop for immersive applications?",
+  opts:[
+    "Prompt AI, generate code, and launch when it runs",
+    "Build manually, benchmark FPS, and release",
+    "Specify goals in a PRD, generate a prototype, evaluate presence/flow/discomfort, feed results back to AI, refine",
+    "Generate several AI assets, choose the most realistic one, and finalize"
+  ],
+  ans:2, exp:"Evidence-informed = grounded in data from actual user evaluation. The correct loop: PRD goals → AI prototype → evaluate presence/flow/VRSQ with real users → feed results back into AI prompts → refine. Never skip evaluation."
+},
+{id:332, tags:['mdq','w11','design'], type:'mcq',
+  q:"Which statement best describes how presence, flow, and VRSQ results should be used in AI-assisted immersive development?",
+  opts:[
+    "Presence and flow are subjective, so they should not affect prompts to the AI",
+    "Once frame rate is stable, user testing is unnecessary",
+    "Survey results can be fed back into prompts together with likely system-property causes, but they still need to come from actual user evaluation",
+    "Telemetry alone can fully replace questionnaires and user studies"
+  ],
+  ans:2, exp:"Survey results (IPQ, Flow scales, VRSQ) from real users identify what needs fixing. These are fed back to AI with likely causes (e.g., 'low spatial presence + low FOV → widen virtual FOV'). But telemetry cannot replace subjective experience measurement."
+},
+{id:333, tags:['mdq','w11','design'], type:'mcq',
+  q:"A prototype shows higher VRSQ scores during tasks that require users to search quickly across the scene. What is the best next step?",
+  opts:[
+    "Ask the AI to add more visual detail to improve realism",
+    "Ask the AI to revise the interaction design to reduce rapid head movement demands and reposition important cues",
+    "Ask the AI to increase the number of interactions so users stay active",
+    "Keep the layout the same and improve rendering quality and frame rate"
+  ],
+  ans:1, exp:"High VRSQ during rapid-search tasks → cybersickness caused by rapid head movements. Root cause = interaction design requiring users to turn their heads frequently. Fix: reposition cues to a comfortable viewing region and reduce rapid-scan requirements."
+},
+
+];
+
+questions.push(...mdqQuestions);
+
+
+─
+const state = {
+  answered: {},      // questionId → true/false (correct/incorrect or revealed)
+  totalAnswered: 0
+};
+
+// ─── RENDERING ────────────────────────────────────────────────────────────────
+function renderQuestions(containerId, qs) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  qs.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-card';
+    div.id = 'qcard-' + containerId + '-' + q.id;
+
+    if (q.type === 'mcq') {
+      div.innerHTML = `
+        <div class="q-header">
+          <div class="q-num">${i+1}</div>
+          <div>
+            <div class="q-text">${q.q}</div>
+            <div class="q-type">${tagsToLabel(q.tags)} · Multiple Choice</div>
+          </div>
+        </div>
+        <div class="options">
+          ${q.opts.map((o,idx) => `
+            <div class="option" onclick="selectOption(this, '${containerId}', ${q.id}, ${idx}, ${q.ans})"
+                 data-idx="${idx}">
+              <div class="option-letter">${String.fromCharCode(65+idx)}</div>
+              <div>${o}</div>
+            </div>`).join('')}
+        </div>
+        <div class="answer-box" id="exp-${containerId}-${q.id}">
+          <strong>Explanation:</strong> ${q.exp}
+        </div>`;
+    } else {
+      div.innerHTML = `
+        <div class="q-header">
+          <div class="q-num" style="background:var(--accent2);">${i+1}</div>
+          <div>
+            <div class="q-text">${q.q}</div>
+            <div class="q-type">${tagsToLabel(q.tags)} · Short Answer</div>
+          </div>
+        </div>
+        <button class="reveal-btn" onclick="revealAnswer('${containerId}', ${q.id}, this)">▼ Reveal Answer</button>
+        <div class="answer-box" id="exp-${containerId}-${q.id}">
+          ${q.ans}
+        </div>`;
+    }
+    el.appendChild(div);
+  });
+}
+
+function tagsToLabel(tags) {
+  const map = {theory:'Theory',technical:'Technical',design:'Design & Eval',short:'Short Answer',
+                w1:'W1',w2:'W2',w3:'W3',w4:'W4',w5:'W5',w6:'W6',w8:'W8',w9:'W9',w10:'W10-12',
+                projects:'Project',ipa1:'IPA1',ipa2:'IPA2',tp:'TP'};
+  return tags.filter(t=>map[t]).map(t=>`<span class="tag tag-${tagColor(t)}">${map[t]}</span>`).join(' ');
+}
+function tagColor(t) {
+  return {theory:'purple',technical:'blue',design:'green',short:'yellow',
+          w1:'purple',w2:'purple',w3:'green',w4:'blue',w5:'blue',w6:'red',w8:'red',w9:'green',w10:'yellow',
+          projects:'red',ipa1:'green',ipa2:'blue',tp:'yellow'}[t] || 'purple';
+}
+
+function selectOption(el, cid, qid, selected, correct) {
+  const card = document.getElementById('qcard-' + cid + '-' + qid);
+  if (card.dataset.done) return;
+  card.dataset.done = 'true';
+
+  const opts = card.querySelectorAll('.option');
+  opts[correct].classList.add('correct');
+  if (selected !== correct) opts[selected].classList.add('wrong');
+
+  const exp = document.getElementById(`exp-${cid}-${qid}`);
+  exp.classList.add('show');
+
+  if (!state.answered[qid]) {
+    state.answered[qid] = true;
+    state.totalAnswered++;
+    updateProgress();
+  }
+}
+
+function revealAnswer(cid, qid, btn) {
+  const exp = document.getElementById(`exp-${cid}-${qid}`);
+  exp.classList.toggle('show');
+  btn.textContent = exp.classList.contains('show') ? '▲ Hide Answer' : '▼ Reveal Answer';
+  if (!state.answered[qid]) {
+    state.answered[qid] = true;
+    state.totalAnswered++;
+    updateProgress();
+  }
+}
+
+function updateProgress() {
+  const total = questions.length;
+  const done = Object.keys(state.answered).length;
+  document.getElementById('progress-text').textContent = `${done} / ${total} answered`;
+  document.getElementById('pbar-fill').style.width = `${(done/total)*100}%`;
+}
+
+// ─── QUIZ MODES ────────────────────────────────────────────────────────────────
+function shuffleArr(a) { return [...a].sort(() => Math.random() - 0.5); }
+
+const quizSets = {
+  get all() { return questions; },
+  get theory() { return questions.filter(q => q.tags.includes('theory')); },
+  get technical() { return questions.filter(q => q.tags.includes('technical')); },
+  get design() { return questions.filter(q => q.tags.includes('design')); },
+  get short() { return questions.filter(q => q.type === 'short'); },
+  get w1() { return questions.filter(q => q.tags.includes('w1')); },
+  get w2() { return questions.filter(q => q.tags.includes('w2')); },
+  get w3() { return questions.filter(q => q.tags.includes('w3')); },
+  get w4() { return questions.filter(q => q.tags.includes('w4')); },
+  get w5() { return questions.filter(q => q.tags.includes('w5')); },
+  get w6() { return questions.filter(q => q.tags.includes('w6')); },
+  get w8() { return questions.filter(q => q.tags.includes('w8')); },
+  get w9() { return questions.filter(q => q.tags.includes('w9')); },
+  get w10() { return questions.filter(q => q.tags.includes('w10')); },
+  get mdq() { return questions.filter(q => q.tags.includes('mdq')); },
+  get projects() { return questions.filter(q => q.tags.includes('projects')); },
+  get ipa1() { return questions.filter(q => q.tags.includes('ipa1')); },
+  get ipa2() { return questions.filter(q => q.tags.includes('ipa2')); },
+  get tp() { return questions.filter(q => q.tags.includes('tp')); },
+};
+
+function shuffleQuiz(key) {
+  renderQuestions('quiz-' + key, shuffleArr(quizSets[key]));
+}
+function resetQuiz(key) {
+  renderQuestions('quiz-' + key, quizSets[key]);
+}
+
+// ─── NAVIGATION ────────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  event?.target?.classList.add('active');
+}
+
+function filterNav(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(q) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-week').forEach(w => w.style.display = 'block');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.onload = function() {
+  // Render per-week questions inline in notes pages
+  renderQuestions('quiz-w1', shuffleArr(quizSets.w1));
+  renderQuestions('quiz-w2', shuffleArr(quizSets.w2));
+  renderQuestions('quiz-w3', shuffleArr(quizSets.w3));
+  renderQuestions('quiz-w4', shuffleArr(quizSets.w4));
+  renderQuestions('quiz-w5', shuffleArr(quizSets.w5));
+  renderQuestions('quiz-w6', shuffleArr(quizSets.w6));
+  renderQuestions('quiz-w8', shuffleArr(quizSets.w8));
+  renderQuestions('quiz-w9', shuffleArr(quizSets.w9));
+  renderQuestions('quiz-w10', shuffleArr(quizSets.w10));
+
+  // Render MDQ page
+  renderQuestions('quiz-mdq', shuffleArr(quizSets.mdq));
+
+  // Render project pages
+  renderQuestions('quiz-ipa1', shuffleArr(quizSets.ipa1));
+  renderQuestions('quiz-ipa2', shuffleArr(quizSets.ipa2));
+  renderQuestions('quiz-tp', shuffleArr(quizSets.tp));
+  renderQuestions('quiz-projects', shuffleArr(quizSets.projects));
+
+  // Render dedicated quiz pages
+  renderQuestions('quiz-all', shuffleArr(quizSets.all));
+  renderQuestions('quiz-theory', shuffleArr(quizSets.theory));
+  renderQuestions('quiz-technical', shuffleArr(quizSets.technical));
+  renderQuestions('quiz-design', shuffleArr(quizSets.design));
+  renderQuestions('quiz-short', shuffleArr(quizSets.short));
+};
+</script>
+</body>
+</html>
