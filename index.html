@@ -204,6 +204,7 @@
 
     <div class="nav-week">⭐ Exam-Style (MDQ)</div>
     <a class="nav-item" onclick="showPage('quiz-mdq')" style="color:#f59e0b;font-weight:700;">🎯 MDQ — Actual Lecturer Qs</a>
+    <a class="nav-item" onclick="showPage('quiz-quiz02')" style="color:#00d4aa;font-weight:700;">🧪 QUIZ02 Specialised Test</a>
 
     <div class="nav-week">Practice</div>
     <a class="nav-item" onclick="showPage('quiz-theory')">📝 Theory Questions</a>
@@ -1132,6 +1133,26 @@
   <div id="quiz-short"></div>
 </div>
 
+<!-- QUIZ02 Specialised Test -->
+<div class="page" id="page-quiz-quiz02">
+  <div class="week-badge" style="border-color:#00d4aa;color:#00d4aa;">🧪 QUIZ02 Focus — Post-break Weeks + IPA1 + IPA2 + MDQ</div>
+  <h1>QUIZ02 Specialised Test</h1>
+  <p style="color:var(--text-muted);margin-bottom:8px;">Weighted toward weeks 8–12, IPA1 &amp; IPA2 implementation concepts, and MDQ questions. 90 min · individual · Examena proctored.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+    <span class="tag tag-red">W8 HMD Simulator</span>
+    <span class="tag tag-green">W9 Interaction</span>
+    <span class="tag tag-yellow">W10-12 Industry</span>
+    <span class="tag tag-green">IPA1 Babylon.js</span>
+    <span class="tag tag-blue">IPA2 Optics</span>
+    <span class="tag tag-yellow">MDQ Lecturer Qs</span>
+  </div>
+  <div class="quiz-controls">
+    <button class="btn btn-primary" onclick="shuffleQuiz('quiz02')">🔀 Shuffle</button>
+    <button class="btn btn-outline" onclick="resetQuiz('quiz02')">↺ Reset</button>
+  </div>
+  <div id="quiz-quiz02"></div>
+</div>
+
 </main>
 </div>
 
@@ -1844,6 +1865,72 @@ const projectQuestions = [
   ans:2, exp:"70% of Quest 3 participants (7/10) reported at least one symptom. PC was 50% (5/10). Despite this, overall comfort ratings were similar — participants separated physical symptoms from general enjoyment."
 },
 
+// ══ BABYLON.JS IMPLEMENTATION (QUIZ02) ══════════════════════════════════════
+{id:400, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In IPA1's PointerDragBehavior, what does `useObjectOrientationForDragging: false` mean?",
+  opts:["The sphere cannot be rotated while dragging","The drag plane stays world-aligned rather than rotating with the object","Dragging is disabled on mobile devices","The drag speed is decoupled from object scale"],
+  ans:1, exp:"Setting useObjectOrientationForDragging: false keeps the drag plane in world space (Y-axis up). If true, the plane would rotate with the mesh — undesirable for horizontal surface dragging."
+},
+{id:401, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In Babylon.js, `scene.createDefaultXRExperienceAsync()` is wrapped in `.catch()` in IPA1 because:",
+  opts:["Promises always require catch in TypeScript","WebXR may be unsupported in the current browser, so graceful degradation is needed","The engine throws when no headset is physically connected","createDefaultXRExperienceAsync always rejects on first call"],
+  ans:1, exp:"WebXR availability depends on browser and device. Wrapping in try/catch (or .catch) allows the app to continue running without XR if the browser doesn't support it — a common graceful degradation pattern."
+},
+{id:402, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In IPA1, what is stored in `scene.metadata` and why?",
+  opts:["Nothing; scene.metadata is reserved for Babylon.js internals","xrHelper and xrConfig, so tests can access them without exposing private class state","The dragon mesh position for each test frame","The engine frame rate and canvas size"],
+  ans:1, exp:"scene.metadata is Babylon.js's generic key-value bag attached to the scene. Storing xrHelper and xrConfig there lets unit tests retrieve them without coupling to private class internals."
+},
+{id:403, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In Babylon.js, `AdvancedDynamicTexture.CreateFullscreenUI()` produces a UI that:",
+  opts:["Attaches to a specific plane mesh in the 3D scene","Renders as a 2D overlay on top of the canvas","Requires a WebXR session to display","Updates only when the scene is paused"],
+  ans:1, exp:"CreateFullscreenUI creates a 2D overlay that always faces the camera and sits on top of the 3D scene — ideal for HUD elements like TextBlocks."
+},
+{id:404, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In IPA1, what is the role of the `floorMeshes` array in the WebXR config?",
+  opts:["Marks meshes as static for physics simulation","Specifies which meshes the user can teleport onto","Defines which meshes are excluded from VR rendering","Controls which meshes receive shadows"],
+  ans:1, exp:"floorMeshes tells the WebXR teleportation system which surfaces are valid landing spots. In IPA1, the ground plane is the only teleportable surface."
+},
+{id:405, tags:['quiz02','ipa2','technical'], type:'mcq',
+  q:"In IPA2's chromatic aberration simulation, which color channel is displaced the most toward the lens periphery?",
+  opts:["Green","Blue","Red","All channels are displaced equally"],
+  ans:2, exp:"Red light has the longest wavelength and bends the most when refracted through a lens (dispersion). The IPA2 shader applies the largest UV offset to the red channel, producing visible red fringing at the edges."
+},
+{id:406, tags:['quiz02','ipa2','technical'], type:'mcq',
+  q:"In Babylon.js post-processing, what is the `onApply` callback used for?",
+  opts:["Called when the post-process asset is first loaded from disk","Called every frame just before the shader runs, used to push updated uniform values","Triggered when the user toggles the effect on/off","Handles click events on the post-processed canvas"],
+  ans:1, exp:"onApply fires each frame before the shader executes. In IPA2 it passes updated k1, k2, and chromatic aberration values as GLSL uniforms, so sliders take effect immediately."
+},
+{id:407, tags:['quiz02','ipa2','technical'], type:'mcq',
+  q:"In IPA2, what does the `showGrid` uniform control inside the GLSL distortion shader?",
+  opts:["Toggles only the 3D wireframe mesh grid in the scene","A per-frame flag that switches the procedural grid pattern on/off in the eye-viewport output","Sets the render target texture resolution","Controls the number of distortion correction passes"],
+  ans:1, exp:"The showGrid uniform is set via the onApply callback. When true, the shader draws a procedural grid using distorted UV coordinates — making the barrel distortion curve visually explicit in the eye viewports."
+},
+{id:408, tags:['quiz02','ipa2','technical'], type:'mcq',
+  q:"In IPA2, why does each eye require a separate off-axis frustum projection matrix rather than just shifting the camera position by IPD?",
+  opts:["Babylon.js doesn't support rendering the same scene twice","Each eye's viewpoint is offset from the display centre, so a symmetric frustum would misalign the image — off-axis projection corrects this","The left and right displays run at different resolutions","Off-axis projection is only needed for distortion correction"],
+  ans:1, exp:"A symmetric projection assumes the eye is centered on the display. With IPD offset, each eye looks through a different part of the lens. An asymmetric (off-axis) frustum correctly places the near-plane origin at the lens center, matching how real VR SDKs compute projection matrices."
+},
+{id:409, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In a Babylon.js TypeScript project (IPA1 pattern), what is the typical responsibility split between `main.ts` and `app.ts`?",
+  opts:["main.ts handles WebXR; app.ts handles standard rendering","main.ts bootstraps the canvas and engine, then delegates scene creation to app.ts","main.ts contains all business logic; app.ts is only for test doubles","They are interchangeable — either file can hold any logic"],
+  ans:1, exp:"main.ts creates the HTML canvas, instantiates the Engine, creates an App, calls createScene(), and starts the render loop. app.ts owns all scene-level logic (meshes, cameras, lights, interactions)."
+},
+{id:410, tags:['quiz02','ipa1','technical'], type:'mcq',
+  q:"In Babylon.js, `NullEngine` is used in IPA1 unit tests instead of the standard `Engine` because:",
+  opts:["NullEngine renders 10× faster for performance benchmarks","NullEngine skips WebGL initialization so tests can run in Node.js without a canvas or GPU","NullEngine automatically mocks all Babylon.js scene objects","NullEngine uses the Canvas 2D API instead of WebGL"],
+  ans:1, exp:"Unit tests run in Node.js (no DOM, no GPU). NullEngine is Babylon.js's headless engine that bypasses all rendering, allowing scene logic (camera, mesh transforms, interactions) to be tested without a real graphics context."
+},
+{id:411, tags:['quiz02','ipa2','technical'], type:'mcq',
+  q:"In IPA2, the rendering pipeline applies barrel distortion as a post-process. What does this mean architecturally?",
+  opts:["The 3D scene is rasterized with a distorted projection matrix","The 3D scene renders normally first, then a full-screen shader warps the result before display","Distortion is baked into the mesh UVs at load time","The eye cameras use a pre-warped render target from a separate GPU pass"],
+  ans:1, exp:"Post-processing means: 3D scene → rendered to RenderTargetTexture → distortion shader applied as a full-screen effect → warped result composited into eye viewport. The 3D geometry is completely unaffected; only the final 2D image is warped."
+},
+{id:412, tags:['quiz02','ipa1','ipa2','technical'], type:'short',
+  q:"Compare how IPA1 and IPA2 each used Babylon.js: what was the main implementation focus of each project?",
+  ans:"<strong>IPA1 (Hello Immersive)</strong> focused on core Babylon.js scene setup: ArcRotateCamera, MeshBuilder primitives (sphere, ground, plane), VideoDome for 360° video, Babylon.js GUI (AdvancedDynamicTexture + TextBlock), SceneLoader.ImportMeshAsync for GLB models, ActionManager for click interactions, PointerDragBehavior, and WebXR setup via createDefaultXRExperienceAsync with immersive-vr mode and teleportation. <strong>IPA2 (HMD Simulator)</strong> focused on advanced rendering: custom GLSL post-process shaders for barrel distortion (k1/k2) and chromatic aberration, off-axis asymmetric frustum projection for stereo rendering, RenderTargetTexture for per-eye render targets, layerMask for camera-selective mesh rendering, Observable pattern for UI/scene decoupling, and WebGPU/WebGL2 fallback in main.ts. IPA1 is breadth across Babylon.js features; IPA2 is depth in GPU rendering and optics simulation."
+},
+
 ];
 
 // Merge project questions into main array
@@ -2114,14 +2201,14 @@ function renderQuestions(containerId, qs) {
 
 function tagsToLabel(tags) {
   const map = {theory:'Theory',technical:'Technical',design:'Design & Eval',short:'Short Answer',
-                w1:'W1',w2:'W2',w3:'W3',w4:'W4',w5:'W5',w6:'W6',w8:'W8',w9:'W9',w10:'W10-12',
-                projects:'Project',ipa1:'IPA1',ipa2:'IPA2',tp:'TP'};
+                w1:'W1',w2:'W2',w3:'W3',w4:'W4',w5:'W5',w6:'W6',w8:'W8',w9:'W9',w10:'W10-12',w11:'W11',
+                projects:'Project',ipa1:'IPA1',ipa2:'IPA2',tp:'TP',quiz02:'QUIZ02'};
   return tags.filter(t=>map[t]).map(t=>`<span class="tag tag-${tagColor(t)}">${map[t]}</span>`).join(' ');
 }
 function tagColor(t) {
   return {theory:'purple',technical:'blue',design:'green',short:'yellow',
-          w1:'purple',w2:'purple',w3:'green',w4:'blue',w5:'blue',w6:'red',w8:'red',w9:'green',w10:'yellow',
-          projects:'red',ipa1:'green',ipa2:'blue',tp:'yellow'}[t] || 'purple';
+          w1:'purple',w2:'purple',w3:'green',w4:'blue',w5:'blue',w6:'red',w8:'red',w9:'green',w10:'yellow',w11:'yellow',
+          projects:'red',ipa1:'green',ipa2:'blue',tp:'yellow',quiz02:'green'}[t] || 'purple';
 }
 
 function selectOption(el, cid, qid, selected, correct) {
@@ -2184,6 +2271,10 @@ const quizSets = {
   get ipa1() { return questions.filter(q => q.tags.includes('ipa1')); },
   get ipa2() { return questions.filter(q => q.tags.includes('ipa2')); },
   get tp() { return questions.filter(q => q.tags.includes('tp')); },
+  get quiz02() {
+    const t = ['w8','w9','w10','w11','ipa1','ipa2','tp','mdq','quiz02'];
+    return questions.filter(q => t.some(tag => q.tags.includes(tag)));
+  },
 };
 
 function shuffleQuiz(key) {
@@ -2238,6 +2329,9 @@ window.onload = function() {
   renderQuestions('quiz-technical', shuffleArr(quizSets.technical));
   renderQuestions('quiz-design', shuffleArr(quizSets.design));
   renderQuestions('quiz-short', shuffleArr(quizSets.short));
+
+  // QUIZ02 specialised test
+  renderQuestions('quiz-quiz02', shuffleArr(quizSets.quiz02));
 };
 </script>
 </body>
